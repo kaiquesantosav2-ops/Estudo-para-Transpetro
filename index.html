@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Transpetro 2026 — Painel de Estudos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --paper:#FFFFFF;
+    --panel:#F7F8F9;
+    --ink:#15181B;
+    --ink-soft:#5B6167;
+    --petrol:#0E5C79;
+    --amber:#9C5F14;
+    --amber-bg:#FFF4E6;
+    --line:#E3E5E7;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html{ background:var(--paper); color-scheme: light; }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', -apple-system, sans-serif;
+    font-size: 16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  a{ color:var(--petrol); }
+  input, select, textarea, button{ color-scheme: light; }
+
+  /* ---------- Header ---------- */
+  header{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 28px;
+  }
+  header .eyebrow{
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  header h1{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: -0.3px;
+    margin: 0 0 10px;
+    color: var(--ink);
+  }
+  header .sub{
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 46ch;
+  }
+  .fact-line{
+    display:flex;
+    flex-wrap:wrap;
+    gap: 28px;
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .fact{ }
+  .fact .n{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .fact .l{
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  /* ---------- Nav ---------- */
+  nav{
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top:0;
+    z-index: 10;
+  }
+  .nav-inner{
+    max-width: 760px;
+    margin:0 auto;
+    display:flex;
+    gap: 28px;
+    padding: 0 24px;
+    overflow-x:auto;
+  }
+  .nav-btn{
+    background:none;
+    border:none;
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    padding: 13px 0 11px;
+    cursor:pointer;
+    border-bottom: 2px solid transparent;
+    white-space:nowrap;
+  }
+  .nav-btn:hover{ color: var(--ink); }
+  .nav-btn.active{
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+    font-weight:500;
+  }
+
+  main{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 24px 90px;
+  }
+  section{ display:none; }
+  section.active{ display:block; }
+
+  h2{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    margin: 0 0 6px;
+  }
+  .section-intro{
+    color: var(--ink-soft);
+    max-width: 52ch;
+    margin-bottom: 30px;
+    font-size: 14.5px;
+  }
+
+  h3{
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  .block{
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+  }
+  .block:first-of-type{ border-top:none; padding-top:0; }
+
+  .callout{
+    font-size: 14px;
+    color: var(--ink-soft);
+    padding: 14px 16px;
+    border-left: 2px solid var(--ink-faint);
+    margin: 18px 0;
+  }
+  .callout.amber{
+    border-left-color: var(--amber);
+    background: var(--amber-bg);
+    color: var(--ink);
+  }
+
+  table.struct{
+    width:100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  table.struct th, table.struct td{
+    text-align:left;
+    padding: 8px 8px 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  table.struct th{
+    color: var(--ink-soft);
+    font-weight:500;
+    font-size:12.5px;
+  }
+  table.struct td.mono{ font-family:'IBM Plex Mono', monospace; font-size:13px; }
+  table.struct tr.mine td{ font-weight:600; }
+
+  /* Trilha */
+  .topic-group{ margin-bottom: 4px; }
+  .topic-group h3{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    font-weight:600;
+  }
+  .topic-group .count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight:400;
+  }
+  .topic-list{ list-style:none; padding:0; margin:0 0 6px; }
+  .topic-item{
+    display:flex;
+    align-items:flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 14px;
+  }
+  .topic-item input[type=checkbox]{
+    margin-top: 3px;
+    width: 15px;
+    height:15px;
+    accent-color: var(--ink);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .topic-item label{ cursor:pointer; }
+  .topic-item.done label{ color: var(--ink-soft); text-decoration: line-through; }
+
+  .progress-row{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .progress-bar-wrap{
+    flex:1;
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow:hidden;
+  }
+  .progress-bar-fill{
+    height:100%;
+    background: var(--ink);
+    width:0%;
+    transition: width 0.3s ease;
+  }
+  .progress-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    white-space:nowrap;
+  }
+
+  /* Cargos por categoria */
+  .cat-tabs{
+    display:flex;
+    gap:22px;
+    flex-wrap:wrap;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px;
+  }
+  .cat-tab{
+    font-size: 13.5px;
+    padding: 0;
+    border:none;
+    background: none;
+    cursor:pointer;
+    color: var(--ink-soft);
+  }
+  .cat-tab.active{ color: var(--ink); font-weight:600; }
+  .cat-panel{ display:none; }
+  .cat-panel.active{ display:block; }
+
+  .enfase-list{ list-style:none; padding:0; margin: 6px 0 22px; }
+  .enfase-list li{
+    padding: 7px 0;
+    font-size: 14px;
+    border-bottom: 1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .enfase-list li.mine{ color: var(--amber); font-weight:600; }
+  .enfase-list li .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+  .enfase-list li.mine .tag{ color: var(--amber); }
+
+  /* Cronograma */
+  .phase{
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+  }
+  .phase:first-of-type{ border-top:none; }
+  .phase-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom: 10px;
+  }
+  .phase-head .p-title{ font-weight:600; font-size:15px; }
+  .phase-head .p-dates{ font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--ink-soft); }
+  .phase ul{ margin:0; padding-left:18px; font-size:14px; color: var(--ink); }
+  .phase li{ margin-bottom:7px; }
+
+  /* Provas anteriores */
+  .exam-group{ margin-bottom: 30px; }
+  .exam-group .exam-meta{
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+  }
+  .exam-card{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap: 16px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+  }
+  .exam-card:last-child{ border-bottom: 1px solid var(--line); }
+  .exam-card.mine{ background: var(--amber-bg); margin: 0 -16px; padding: 14px 16px; border-top:none; }
+  .exam-card .exam-name{ font-size: 14.5px; font-weight:500; }
+  .exam-card .exam-sub{ font-size: 12.5px; color: var(--ink-soft); margin-top:2px; }
+  .exam-links{ display:flex; gap: 14px; flex-shrink:0; }
+  .exam-links a{
+    font-size: 13px;
+    text-decoration:none;
+    border-bottom: 1px solid currentColor;
+    white-space:nowrap;
+  }
+
+  footer{
+    max-width:760px;
+    margin: 0 auto;
+    padding: 24px 24px 60px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+  }
+
+  @media (max-width: 600px){
+    header h1{ font-size: 27px; }
+    .exam-card{ flex-direction:column; align-items:flex-start; }
+    .fact-line{ gap:20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Transpetro 2026 · Fundação Cesgranrio</div>
+  <h1>Painel de estudos</h1>
+  <p class="sub">Edital nº 4 — Terra, Nível Superior. Organizado para a sua ênfase: Engenharia de Produção.</p>
+  <div class="fact-line">
+    <div class="fact"><div class="n">12/08 – 14/09</div><div class="l">inscrições</div></div>
+    <div class="fact"><div class="n">29/11/2026</div><div class="l">prova objetiva</div></div>
+    <div class="fact"><div class="n">R$ 14.973,62</div><div class="l">remuneração mínima</div></div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button class="nav-btn active" data-tab="painel">Painel geral</button>
+    <button class="nav-btn" data-tab="trilha">Sua trilha</button>
+    <button class="nav-btn" data-tab="categorias">Cargos por categoria</button>
+    <button class="nav-btn" data-tab="provas">Provas anteriores</button>
+    <button class="nav-btn" data-tab="cronograma">Cronograma</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ================= PAINEL ================= -->
+  <section id="painel" class="active">
+    <h2>Como funciona o concurso</h2>
+    <p class="section-intro">A Transpetro publicou 4 editais em 12/08/2026, todos pela Cesgranrio, com prova no mesmo dia — 29/11/2026 — para todo mundo.</p>
+
+    <div class="block">
+      <h3>Estrutura da prova por edital</h3>
+      <table class="struct">
+        <tr><th>Edital</th><th>Quadro / nível</th><th>Questões</th><th>Taxa</th></tr>
+        <tr><td class="mono">Nº 3</td><td>Terra — nível médio/técnico</td><td class="mono">60</td><td class="mono">R$ 81,50</td></tr>
+        <tr class="mine"><td class="mono">Nº 4</td><td>Terra — nível superior (o seu)</td><td class="mono">70</td><td class="mono">R$ 117,00</td></tr>
+        <tr><td class="mono">Nº 1</td><td>Mar — guarnição/suboficiais</td><td class="mono">50</td><td class="mono">R$ 81,50</td></tr>
+        <tr><td class="mono">Nº 2</td><td>Mar — oficiais</td><td class="mono">70</td><td class="mono">R$ 117,00</td></tr>
+      </table>
+    </div>
+
+    <div class="block">
+      <p style="margin:0;">No seu edital, a prova tem 50 questões de Conhecimentos Específicos da ênfase e 20 de Conhecimentos Gerais (Português e Inglês). As duas fases são eliminatórias: não adianta acertar tudo nas específicas se zerar Português ou Inglês.</p>
+    </div>
+
+    <div class="callout amber">
+      Você já trabalha com controle de entrada/saída de moldes, gestão de ordens de produção (OP) e Six Sigma Green Belt na CBV Vedações — isso é, na prática, o núcleo da prova: PCP, gestão da qualidade e melhoria contínua. É a ênfase onde sua experiência atual pesa mais a seu favor.
+    </div>
+
+    <div class="callout">
+      A admissão exige diploma ou certificado de conclusão de Engenharia de Produção, com registro no CREA. Sua formatura é prevista para dezembro de 2027. Como o cadastro de reserva costuma valer 18 meses (prorrogáveis por mais 18), uma convocação pode acontecer depois da sua formatura — mas confirme esse prazo exato e a documentação exigida no Anexo III do Edital nº 4 antes de pagar a inscrição.
+    </div>
+  </section>
+
+  <!-- ================= TRILHA ================= -->
+  <section id="trilha">
+    <h2>Sua trilha — Engenharia de Produção</h2>
+    <p class="section-intro">Os temas que mais caem nessa ênfase, agrupados como aparecem na prova. Marque o que já revisou — fica salvo automaticamente.</p>
+
+    <div class="progress-row">
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+      <div class="progress-label" id="progress-label">0/0</div>
+    </div>
+
+    <div id="topic-groups"></div>
+  </section>
+
+  <!-- ================= CATEGORIAS ================= -->
+  <section id="categorias">
+    <h2>Cargos por categoria</h2>
+    <p class="section-intro">Os 4 editais, organizados por quadro e nível. Sua ênfase aparece destacada em Terra — Nível Superior.</p>
+
+    <div class="cat-tabs">
+      <button class="cat-tab active" data-cat="terra-superior">Terra · Superior</button>
+      <button class="cat-tab" data-cat="terra-medio">Terra · Médio/Técnico</button>
+      <button class="cat-tab" data-cat="mar-oficiais">Mar · Oficiais</button>
+      <button class="cat-tab" data-cat="mar-guarnicao">Mar · Guarnição</button>
+    </div>
+
+    <div class="cat-panel active" id="cat-terra-superior">
+      <p style="margin-top:0;color:var(--ink-soft);font-size:13.5px;">Edital nº 4 · Cargo único: Profissional Transpetro Júnior, dividido em 33 ênfases. Remuneração mínima garantida: R$ 14.973,62 para todas. Lista abaixo cobre as ênfases mais documentadas — confira o Anexo I completo no site da Cesgranrio para as 33.</p>
+      <h3 style="margin-top:20px;">Engenharias</h3>
+      <ul class="enfase-list">
+        <li class="mine">Engenharia de Produção <span class="tag">sua ênfase</span></li>
+        <li>Engenharia Mecânica</li>
+        <li>Engenharia Civil</li>
+        <li>Engenharia Elétrica</li>
+        <li>Engenharia Química</li>
+        <li>Engenharia Naval</li>
+        <li>Engenharia de Automação</li>
+        <li>Engenharia de Telecomunicações</li>
+        <li>Engenharia de Segurança do Trabalho</li>
+        <li>Engenharia Geotécnica</li>
+        <li>Engenharia de Inspeção</li>
+        <li>Engenharia Ambiental</li>
+      </ul>
+      <h3>Administrativas, jurídicas e de saúde</h3>
+      <ul class="enfase-list">
+        <li>Administração</li>
+        <li>Advocacia <span class="tag">única com discursiva</span></li>
+        <li>Contabilidade</li>
+        <li>Ciência de Dados</li>
+        <li>Análise de Sistemas</li>
+        <li>Comunicação Social</li>
+        <li>Psicologia</li>
+        <li>Serviço Social</li>
+        <li>Pedagogia</li>
+        <li>Nutrição</li>
+        <li>Odontologia</li>
+        <li>Medicina do Trabalho</li>
+        <li>Enfermagem do Trabalho</li>
+      </ul>
+    </div>
+
+    <div class="cat-panel" id="cat-terra-medio">
+      <p style="margin-top:0;color:var(--ink-soft);font-size:13.5px;">Edital nº 3 · Cargo: Profissional Transpetro de Nível Médio — Júnior. A maioria das ênfases pede curso técnico; duas aceitam nível médio comum. Prova com 60 questões.</p>
+      <ul class="enfase-list">
+        <li>Administração e Controle <span class="tag">aceita nível médio</span></li>
+        <li>Monitoramento Logístico <span class="tag">aceita nível médio</span></li>
+        <li>Demais ênfases técnicas <span class="tag">ver Anexo I</span></li>
+      </ul>
+    </div>
+
+    <div class="cat-panel" id="cat-mar-oficiais">
+      <p style="margin-top:0;color:var(--ink-soft);font-size:13.5px;">Edital nº 2 · Cargos de oficiais de embarcação, como Segundo Oficial de Náutica e Segundo Oficial de Máquinas. Exige registro como Aquaviário na Autoridade Marítima Brasileira. Maior remuneração mínima do concurso: R$ 15.034,81 (2ON).</p>
+      <p style="font-size:13.5px;color:var(--ink-soft);">Etapas adicionais: Exame de Aptidão Física (natação, corrida) e certificados aquaviários válidos por, no mínimo, 90 dias na admissão.</p>
+    </div>
+
+    <div class="cat-panel" id="cat-mar-guarnicao">
+      <p style="margin-top:0;color:var(--ink-soft);font-size:13.5px;">Edital nº 1 · Guarnição e suboficiais: Auxiliar de Saúde, Condutor Bombeador, Condutor Mecânico, Cozinheiro, Eletricista, Moço de Convés, Moço de Máquinas e Taifeiro. Prova de 50 questões.</p>
+      <p style="font-size:13.5px;color:var(--ink-soft);">Para Condutor Bombeador, Condutor Mecânico e Eletricista, a parte de Conhecimentos Gerais inclui Inglês Técnico Marítimo. Também exige Exame de Aptidão Física.</p>
+    </div>
+  </section>
+
+  <!-- ================= PROVAS ANTERIORES ================= -->
+  <section id="provas">
+    <h2>Provas anteriores</h2>
+    <p class="section-intro">Cadernos oficiais do último concurso da Transpetro (2023), aplicado pela mesma banca. Ainda não existe prova anterior para o edital de 2026 — use estas para treinar o estilo Cesgranrio, o tempo de prova e o nível de dificuldade.</p>
+
+    <div class="exam-group">
+      <h3>Terra · Nível Superior — 2023.2 (Edital nº 2)</h3>
+      <div class="exam-meta">Antecessor direto do seu Edital nº 4. Mesmo caderno de Português e Inglês para todas as ênfases.</div>
+
+      <div class="exam-card mine">
+        <div>
+          <div class="exam-name">Engenharia de Produção — Prova 19</div>
+          <div class="exam-sub">70 questões · sua ênfase</div>
+        </div>
+        <div class="exam-links">
+          <a href="https://arquivos.qconcursos.com/prova/arquivo_prova/101234/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao-prova.pdf" target="_blank" rel="noopener">Prova</a>
+          <a href="https://arquivos.qconcursos.com/prova/arquivo_gabarito/101223/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-9-comercializacao-e-logistica-transporte-maritimo-gabarito.pdf" target="_blank" rel="noopener">Gabarito</a>
+        </div>
+      </div>
+
+      <div class="exam-card">
+        <div>
+          <div class="exam-name">Gabarito completo — Provas 1 a 28</div>
+          <div class="exam-sub">Todas as ênfases de nível superior desse edital, inclusive a sua</div>
+        </div>
+        <div class="exam-links">
+          <a href="https://arquivos.qconcursos.com/prova/arquivo_gabarito/101223/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-9-comercializacao-e-logistica-transporte-maritimo-gabarito.pdf" target="_blank" rel="noopener">Ver gabarito</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="exam-group">
+      <h3>Terra · Nível Médio/Técnico — 2023.1 (Edital nº 1)</h3>
+      <div class="exam-meta">Antecessor do seu Edital nº 3, caso queira comparar o nível de dificuldade entre níveis.</div>
+
+      <div class="exam-card">
+        <div>
+          <div class="exam-name">Técnico de Dutos e Terminais</div>
+          <div class="exam-sub">60 questões</div>
+        </div>
+        <div class="exam-links">
+          <a href="https://arquivos.qconcursos.com/prova/arquivo_prova/101197/cesgranrio-2023-transpetro-tecnico-de-dutos-prova.pdf" target="_blank" rel="noopener">Prova</a>
+          <a href="https://arquivos.qconcursos.com/prova/arquivo_gabarito/101197/cesgranrio-2023-transpetro-tecnico-de-dutos-gabarito.pdf" target="_blank" rel="noopener">Gabarito</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="callout">Esses PDFs são reproduções do caderno oficial, hospedadas por um site de questões de concursos. Para a fonte primária e para provas de edições mais antigas (2006 a 2018), consulte <a href="https://www.cesgranrio.org.br/concurso/transpetro/" target="_blank" rel="noopener">cesgranrio.org.br/concurso/transpetro</a>.</p>
+  </section>
+
+  <!-- ================= CRONOGRAMA ================= -->
+  <section id="cronograma">
+    <h2>Cronograma até a prova</h2>
+    <p class="section-intro">De agora (1º de setembro) até 29 de novembro — cerca de 13 semanas. Três fases, do fundamento à revisão.</p>
+
+    <div class="phase">
+      <div class="phase-head">
+        <span class="p-title">Fase 1 — Fundamentos</span>
+        <span class="p-dates">01/09 – 04/10</span>
+      </div>
+      <ul>
+        <li>PCP e Gestão da Qualidade primeiro — são os temas de maior recorrência e os mais próximos da sua rotina na CBV.</li>
+        <li>Português todos os dias, mesmo que pouco: é eliminatório e some junto com Inglês na mesma fase da prova.</li>
+        <li>Leia o Edital nº 4 completo e confirme a documentação de registro profissional exigida.</li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head">
+        <span class="p-title">Fase 2 — Aprofundamento</span>
+        <span class="p-dates">05/10 – 08/11</span>
+      </div>
+      <ul>
+        <li>Engenharia econômica, custos e gestão de projetos.</li>
+        <li>Pesquisa operacional, estatística e logística/estoques.</li>
+        <li>Resolva a prova de 2023 por tema, não por prova inteira ainda.</li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-head">
+        <span class="p-title">Fase 3 — Revisão e simulados</span>
+        <span class="p-dates">09/11 – 29/11</span>
+      </div>
+      <ul>
+        <li>Refaça a prova de 2023 cronometrada, no formato real (4h30, 70 questões).</li>
+        <li>Revisão dirigida pelo seu caderno de erros — não pelo conteúdo do zero.</li>
+        <li>Últimos 3 dias: só revisão leve e descanso, sem conteúdo novo.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Fontes: editais nº 1 a 4 da Transpetro/Cesgranrio (2026); prova e gabarito de nível superior 2023.2 e de nível médio 2023.1, disponibilizados por terceiros a partir de cadernos oficiais da Cesgranrio. Confira sempre o edital vigente e seus anexos em cesgranrio.org.br antes de se inscrever.
+</footer>
+
+<script>
+const topics = [
+  { group: "PCP — Planejamento e Controle da Produção", items: [
+    "Programação e sequenciamento da produção",
+    "Controle de processos produtivos",
+    "Indicadores de desempenho de produção",
+    "MRP e planejamento de capacidade"
+  ]},
+  { group: "Gestão da Qualidade", items: [
+    "Sistemas de gestão da qualidade",
+    "Planejamento e controle da qualidade",
+    "Confiabilidade de processos e produtos",
+    "Ferramentas de melhoria contínua (Six Sigma, Lean)"
+  ]},
+  { group: "Gestão de suprimentos, estoques e logística", items: [
+    "Cadeia de abastecimento",
+    "Controle e gestão de estoques",
+    "Logística de distribuição",
+    "Ergonomia e segurança do trabalho"
+  ]},
+  { group: "Engenharia econômica e projetos", items: [
+    "Engenharia econômica e análise de investimentos",
+    "Gestão de custos industriais",
+    "Gestão de projetos"
+  ]},
+  { group: "Pesquisa operacional e estatística", items: [
+    "Métodos de pesquisa operacional",
+    "Estatística aplicada a processos",
+    "Planejamento estratégico e gestão de RH"
+  ]},
+  { group: "Conhecimentos Gerais (eliminatórios)", items: [
+    "Português — interpretação e gramática",
+    "Inglês — leitura técnica"
+  ]}
+];
+
+const topicGroupsEl = document.getElementById('topic-groups');
+topics.forEach((g, gi) => {
+  const div = document.createElement('div');
+  div.className = 'topic-group block';
+  div.innerHTML = `
+    <h3>${g.group} <span class="count" data-count="${gi}">0/${g.items.length}</span></h3>
+    <ul class="topic-list">
+      ${g.items.map((it, ii) => `
+        <li class="topic-item" id="item-${gi}-${ii}">
+          <input type="checkbox" id="cb-${gi}-${ii}" data-gi="${gi}" data-ii="${ii}">
+          <label for="cb-${gi}-${ii}">${it}</label>
+        </li>
+      `).join('')}
+    </ul>
+  `;
+  topicGroupsEl.appendChild(div);
+});
+
+const totalTopics = topics.reduce((sum, g) => sum + g.items.length, 0);
+const STORAGE_KEY = 'transpetro-eng-producao-progress';
+let checkedState = {};
+
+async function loadProgress(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){
+      checkedState = JSON.parse(res.value);
+    }
+  }catch(e){
+    checkedState = {};
+  }
+  applyState();
+}
+
+function applyState(){
+  let totalDone = 0;
+  topics.forEach((g, gi) => {
+    let groupDone = 0;
+    g.items.forEach((it, ii) => {
+      const key = gi + '-' + ii;
+      const cb = document.getElementById('cb-' + key);
+      const li = document.getElementById('item-' + key);
+      const isDone = !!checkedState[key];
+      cb.checked = isDone;
+      li.classList.toggle('done', isDone);
+      if(isDone){ groupDone++; totalDone++; }
+    });
+    document.querySelector(`[data-count="${gi}"]`).textContent = `${groupDone}/${g.items.length}`;
+  });
+  const pct = totalTopics ? Math.round((totalDone/totalTopics)*100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${totalDone}/${totalTopics} · ${pct}%`;
+}
+
+async function saveProgress(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(checkedState), false);
+  }catch(e){ /* best effort */ }
+}
+
+topicGroupsEl.addEventListener('change', (e) => {
+  if(e.target.matches('input[type=checkbox]')){
+    const gi = e.target.dataset.gi;
+    const ii = e.target.dataset.ii;
+    const key = gi + '-' + ii;
+    checkedState[key] = e.target.checked;
+    applyState();
+    saveProgress();
+  }
+});
+
+loadProgress();
+
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('main > section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+document.querySelectorAll('.cat-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.cat-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('cat-' + btn.dataset.cat).classList.add('active');
+  });
+});
+</script>
+
+</body>
+</html>
