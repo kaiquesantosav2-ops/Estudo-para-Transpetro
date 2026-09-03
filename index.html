@@ -112,9 +112,14 @@
   .video-card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
   .video-thumb-wrap { position:relative; width:96px; height:56px; flex-shrink:0; border-radius:6px; overflow:hidden; background:#111; }
   .video-thumb-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
-  .video-thumb-wrap::after { content:'▶'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px; background:rgba(0,0,0,0.25); }
+  .video-thumb-wrap::after { content:''; position:absolute; inset:0; background:rgba(0,0,0,0.22); }
+  .video-thumb-wrap .play {
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:1;
+    width:0; height:0; border-left:10px solid #fff; border-top:6px solid transparent; border-bottom:6px solid transparent;
+  }
   .video-card.no-thumb .video-thumb-wrap { width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:var(--accent); }
-  .video-card.no-thumb .video-thumb-wrap::after { content:'🔎'; background:none; font-size:16px; }
+  .video-card.no-thumb .video-thumb-wrap::after { display:none; }
+  .video-card.no-thumb .play { display:none; }
   .video-info { flex:1; min-width:0; }
   .video-title { font-size:13px; font-weight:600; }
   .video-sub { font-size:11.5px; color:var(--text-secondary); }
@@ -200,6 +205,60 @@
   .alert.warning { background:var(--amber-bg); border-color:var(--amber); color:#7A4A05; }
   .alert.success { background:var(--green-bg); border-color:var(--green); color:#065F4D; }
 
+  .header-course {
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    margin-top:14px; padding-top:14px; border-top:1px solid var(--border-light);
+  }
+  .header-course-badge {
+    display:inline-flex; align-items:center; gap:8px; background:var(--green-bg);
+    border:1px solid #BFE6E2; color:#065F4D; font-size:13px; font-weight:600;
+    padding:6px 12px; border-radius:20px;
+  }
+  .header-course-badge .dot { width:8px; height:8px; border-radius:50%; background:var(--green); }
+  .header-course-action { font-size:12.5px; color:var(--accent); font-weight:600; background:none; border:none; cursor:pointer; font-family:inherit; }
+  .header-course-action:hover { text-decoration:underline; }
+
+  .want-btn {
+    font-size:12.5px; font-weight:700; padding:8px 14px; border-radius:18px;
+    border:1px solid var(--accent); background:var(--white); color:var(--accent);
+    cursor:pointer; transition:.15s ease; white-space:nowrap; font-family:inherit;
+  }
+  .want-btn:hover { background:var(--accent); color:#fff; }
+  .want-btn.selected { background:var(--green); border-color:var(--green); color:#fff; }
+
+  .picker-hint {
+    background:var(--amber-bg); border:1px solid #F0D5A8; border-radius:12px;
+    padding:14px 16px; margin-bottom:18px; font-size:13.5px; color:#7A4A05;
+  }
+
+  .gab-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(52px,1fr)); gap:8px; }
+  .gab-q {
+    background:var(--white); border:1px solid var(--border); border-radius:8px; padding:6px 4px 8px; text-align:center;
+  }
+  .gab-q .n { display:block; font-size:10px; color:var(--text-tertiary); font-family:'IBM Plex Mono', monospace; margin-bottom:4px; }
+  .gab-opts { display:flex; justify-content:center; gap:2px; }
+  .gab-opts button {
+    width:18px; height:18px; border-radius:4px; border:1px solid var(--border); background:var(--bg);
+    font-size:10px; font-weight:700; cursor:pointer; font-family:'IBM Plex Mono', monospace; color:var(--text-secondary); padding:0;
+  }
+  .gab-opts button.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .gab-q.ok { border-color:#99E0D6; background:var(--green-bg); }
+  .gab-q.bad { border-color:#F0B4B4; background:var(--red-bg); }
+  .gabarito-toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:end; margin-bottom:14px; }
+  .gabarito-toolbar .log-field { flex:1; min-width:180px; }
+  .result-box { margin-top:16px; padding:14px 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg); display:none; }
+  .result-box.show { display:block; }
+  .official-gab { font-family:'IBM Plex Mono', monospace; font-size:13px; line-height:1.8; word-break:break-all; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:10px; }
+  .course-card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; margin-bottom:8px; }
+  .course-pick {
+    background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:14px 14px 12px;
+    cursor:pointer; text-align:left; font-family:inherit; transition:.18s ease; width:100%;
+  }
+  .course-pick:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); border-color:#C5D4DA; }
+  .course-pick.selected { background:var(--green-bg); border-color:#7DCFC4; box-shadow:0 0 0 2px rgba(13,148,136,0.18); }
+  .course-pick .pick-name { display:block; font-size:14.5px; font-weight:700; color:var(--text-primary); margin-bottom:8px; }
+  .course-pick .pick-meta { font-size:11.5px; color:var(--text-secondary); margin-bottom:10px; }
+
   footer { border-top:1px solid var(--border); padding:22px 0; margin-top:36px; font-size:11.5px; color:var(--text-tertiary); text-align:center; }
 
   @media (max-width:768px){
@@ -227,16 +286,20 @@
       <div class="meta-item"><span class="meta-label">Questões</span><span class="meta-value">70 objetivas</span></div>
       <div class="meta-item"><span class="meta-label">Taxa</span><span class="meta-value">R$ 117,00</span></div>
     </div>
+    <div class="header-course">
+      <span class="header-course-badge"><span class="dot"></span><span id="header-course-name">Nenhum curso selecionado</span></span>
+      <button class="header-course-action" id="header-change-course" type="button">Trocar curso</button>
+    </div>
   </div>
 </header>
 
 <nav class="container">
   <div class="nav-tabs">
-    <button class="nav-btn active" data-tab="painel">Painel geral</button>
-    <button class="nav-btn" data-tab="trilha">Sua trilha</button>
-    <button class="nav-btn" data-tab="enfases">Ênfases & cargos</button>
-    <button class="nav-btn" data-tab="testes">Testes</button>
-    <button class="nav-btn" data-tab="cronograma">Cronograma</button>
+        <button class="nav-btn active" data-tab="painel">Painel geral</button>
+        <button class="nav-btn" data-tab="cursos">Escolher curso</button>
+        <button class="nav-btn" data-tab="trilha">Sua trilha</button>
+        <button class="nav-btn" data-tab="testes">Testes e gabaritos</button>
+        <button class="nav-btn" data-tab="cronograma">Cronograma</button>
   </div>
 </nav>
 
@@ -269,7 +332,8 @@
 
     <div class="card accent" id="painel-course-card">
       <h3 id="painel-course-title">Sua ênfase selecionada</h3>
-      <p id="painel-course-text" style="margin:0; color:#0B4A5F;"></p>
+      <p id="painel-course-text" style="margin:0 0 12px; color:#0B4A5F;"></p>
+      <button class="btn" id="painel-go-course" type="button">Escolher meu curso</button>
     </div>
 
     <h3 style="margin-top:20px;margin-bottom:8px;">Remuneração e admissão</h3>
@@ -284,7 +348,7 @@
   <!-- ===== SUA TRILHA ===== -->
   <section id="trilha">
     <h2 class="section-title">Sua trilha de estudos</h2>
-    <p class="section-subtitle">Escolha seu curso abaixo — a trilha, os tópicos e as aulas se ajustam automaticamente. Marque conforme avança; o progresso é salvo por curso.</p>
+    <p class="section-subtitle">Conteúdo desenhado para o curso que você confirmou. Marque os tópicos conforme avança; o progresso é salvo por graduação.</p>
 
     <div class="course-chip-row" id="quick-course-chips"></div>
 
@@ -301,10 +365,12 @@
     <div id="topics-container"></div>
   </section>
 
-  <!-- ===== ÊNFASES & CARGOS ===== -->
-  <section id="enfases">
-    <h2 class="section-title">Ênfases e cargos</h2>
-    <p class="section-subtitle">Clique em <strong>Selecionar</strong> na ênfase da sua graduação — a aba "Sua trilha" já desenha o conteúdo específico dela.</p>
+  <!-- ===== ESCOLHER CURSO ===== -->
+  <section id="cursos">
+    <h2 class="section-title">Escolha o curso da sua graduação</h2>
+    <p class="section-subtitle">Clique no curso e depois em <strong>Essa daqui que eu quero</strong>. A trilha, as aulas, as provas e os gabaritos passam a ser só dessa graduação.</p>
+
+    <div class="picker-hint" id="course-picker-hint">Nenhum curso confirmado ainda. Escolha a ênfase da sua graduação abaixo.</div>
 
     <div class="cat-tabs">
       <button class="cat-tab active" data-cat="engenharias">Engenharias</button>
@@ -318,13 +384,13 @@
     <div id="saude" class="cat-panel"></div>
     <div id="tecnologia" class="cat-panel"></div>
 
-    <p style="font-size:12.5px;color:var(--text-tertiary);margin-top:10px;">Lista não exaustiva — o edital tem 33 ênfases ao todo. Confira o Anexo I completo no site da Cesgranrio.</p>
+    <p style="font-size:12.5px;color:var(--text-tertiary);margin-top:10px;">Lista alinhada ao Edital nº 4. Confira o Anexo I completo no site da Cesgranrio se a sua ênfase não aparecer.</p>
   </section>
 
   <!-- ===== TESTES ===== -->
   <section id="testes">
-    <h2 class="section-title">Testes</h2>
-    <p class="section-subtitle">Provas antigas da Cesgranrio para treinar, com gabarito, mais um painel de desempenho: registre suas tentativas e acompanhe sua taxa de aprovação.</p>
+    <h2 class="section-title">Testes e gabaritos</h2>
+    <p class="section-subtitle">Provas antigas da Cesgranrio, gabarito oficial e conferência das suas respostas. Tudo filtra pelo curso que você escolheu.</p>
 
     <div class="test-summary-grid">
       <div class="test-summary-card"><div class="big" id="stat-total-attempts">0</div><div class="lbl">testes feitos</div></div>
@@ -356,45 +422,64 @@
     <ul class="attempt-list" id="attempt-list"></ul>
     <div class="empty-state" id="attempt-empty" style="display:none;">Nenhuma tentativa registrada ainda.</div>
 
-    <h3 style="margin:26px 0 4px;">Provas disponíveis para treinar</h3>
-    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Cadernos oficiais de concursos anteriores da Transpetro, aplicados pela Cesgranrio — prova e gabarito.</p>
+    <h3 style="margin:26px 0 4px;">Provas e gabaritos oficiais</h3>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Cadernos da Cesgranrio: baixe a prova, o gabarito e confira suas respostas abaixo.</p>
 
     <div class="exam-section">
-      <h3>Sua ênfase selecionada: <span id="testes-course-name">—</span></h3>
+      <h3>Do seu curso: <span id="testes-course-name">—</span></h3>
       <p class="exam-section-meta" id="testes-course-meta"></p>
       <div id="testes-course-card"></div>
     </div>
 
+    <div class="exam-section" id="gabarito-section">
+      <h3>Conferir gabarito</h3>
+      <p class="exam-section-meta">Marque as alternativas que você assinalou. Depois compare com o gabarito oficial da prova escolhida.</p>
+      <div class="gabarito-toolbar">
+        <div class="log-field">
+          <label>Prova para conferir</label>
+          <select id="gab-exam"></select>
+        </div>
+        <button class="btn" id="gab-check" type="button">Conferir gabarito</button>
+        <button class="btn" id="gab-show" type="button" style="background:var(--white);color:var(--accent);border:1px solid var(--accent);">Ver gabarito oficial</button>
+        <button class="btn" id="gab-clear" type="button" style="background:var(--white);color:var(--text-secondary);border:1px solid var(--border);">Limpar</button>
+      </div>
+      <div id="gab-grid" class="gab-grid"></div>
+      <div class="result-box" id="gab-result"></div>
+      <div id="gab-official-wrap" style="margin-top:14px;">
+        <div class="log-field" style="margin-bottom:8px;">
+          <label>Cole o gabarito oficial (letras, ex.: ABCDE...)</label>
+          <input type="text" id="gab-official-input" placeholder="A B C D E ..." autocomplete="off">
+        </div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">Gabarito usado na conferência</div>
+        <div class="official-gab" id="gab-official">Abra o PDF do gabarito, copie as letras e cole acima.</div>
+      </div>
+    </div>
+
     <div class="exam-section">
-      <h3>Transpetro 2023 — Edital nº 2 (Nível Superior)</h3>
-      <p class="exam-section-meta">Antecessor direto do seu Edital nº 4. 70 questões, mesmo formato de prova.</p>
+      <h3>Outras provas úteis (Transpetro 2023)</h3>
+      <p class="exam-section-meta">Mesmo organizador e formato. Use para treinar Português/Inglês ou comparar nível.</p>
       <div class="exam-card featured">
-        <div class="exam-info"><h4>Engenharia de Produção — Prova 19</h4><p>70 questões · 50 específicas + 20 gerais (Português e Inglês no mesmo caderno)</p></div>
+        <div class="exam-info"><h4>Engenharia de Produção — Prova 19</h4><p>70 questões · 50 específicas + 20 gerais</p></div>
         <div class="exam-links">
-          <a href="https://arquivos.qconcursos.com/prova/arquivo_prova/101234/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao-prova.pdf" class="exam-link" target="_blank" rel="noopener">📄 Prova</a>
-          <a href="https://arquivos.qconcursos.com/prova/arquivo_gabarito/101223/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-9-comercializacao-e-logistica-transporte-maritimo-gabarito.pdf" class="exam-link" target="_blank" rel="noopener">✓ Gabarito</a>
-          <a href="https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao" class="exam-link" target="_blank" rel="noopener">🔎 Mais questões</a>
+          <a href="https://arquivos.qconcursos.com/prova/arquivo_prova/101234/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao-prova.pdf" class="exam-link" target="_blank" rel="noopener">Prova</a>
+          <a href="https://arquivos.qconcursos.com/prova/arquivo_gabarito/101234/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao-gabarito.pdf" class="exam-link" target="_blank" rel="noopener">Gabarito</a>
+          <a href="https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao" class="exam-link" target="_blank" rel="noopener">Questoes</a>
         </div>
       </div>
       <div class="exam-card">
-        <div class="exam-info"><h4>Gabarito completo — Provas 1 a 28</h4><p>Todas as ênfases de nível superior desse edital</p></div>
-        <div class="exam-links"><a href="https://www.cesgranrio.org.br/concurso/transpetro/" class="exam-link" target="_blank" rel="noopener">🔗 Ver no Cesgranrio</a></div>
-      </div>
-    </div>
-
-    <div class="exam-section">
-      <h3>Transpetro 2023 — Edital nº 1 (Nível Médio/Técnico)</h3>
-      <p class="exam-section-meta">Para comparação de nível de dificuldade.</p>
-      <div class="exam-card">
-        <div class="exam-info"><h4>Técnico de Dutos e Terminais</h4><p>60 questões</p></div>
+        <div class="exam-info"><h4>Técnico de Dutos e Terminais</h4><p>60 questões · Nível médio/técnico 2023</p></div>
         <div class="exam-links">
-          <a href="https://arquivos.qconcursos.com/prova/arquivo_prova/101197/cesgranrio-2023-transpetro-tecnico-de-dutos-prova.pdf" class="exam-link" target="_blank" rel="noopener">📄 Prova</a>
-          <a href="https://arquivos.qconcursos.com/prova/arquivo_gabarito/101197/cesgranrio-2023-transpetro-tecnico-de-dutos-gabarito.pdf" class="exam-link" target="_blank" rel="noopener">✓ Gabarito</a>
+          <a href="https://arquivos.qconcursos.com/prova/arquivo_prova/101197/cesgranrio-2023-transpetro-tecnico-de-dutos-prova.pdf" class="exam-link" target="_blank" rel="noopener">Prova</a>
+          <a href="https://arquivos.qconcursos.com/prova/arquivo_gabarito/101197/cesgranrio-2023-transpetro-tecnico-de-dutos-gabarito.pdf" class="exam-link" target="_blank" rel="noopener">Gabarito</a>
         </div>
       </div>
+      <div class="exam-card">
+        <div class="exam-info"><h4>Gabaritos oficiais — Cesgranrio</h4><p>Todas as ênfases do concurso anterior</p></div>
+        <div class="exam-links"><a href="https://www.cesgranrio.org.br/concurso/transpetro/" class="exam-link" target="_blank" rel="noopener">Ver no Cesgranrio</a></div>
+      </div>
     </div>
 
-    <div class="alert info"><strong>Dica:</strong> refaça a prova da sua ênfase cronometrada (formato real) na Fase 3 do cronograma, e registre o resultado acima — sua taxa de aprovação some ao longo das tentativas.</div>
+    <div class="alert info"><strong>Dica:</strong> faça a prova da sua ênfase cronometrada na Fase 3, confira o gabarito aqui e registre o resultado no painel acima.</div>
   </section>
 
   <!-- ===== CRONOGRAMA ===== -->
@@ -455,6 +540,8 @@
   const COURSES = {
     producao: { name:"Engenharia de Produção",
       examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao",
+      provaUrl:"https://arquivos.qconcursos.com/prova/arquivo_prova/101234/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao-prova.pdf",
+      gabaritoUrl:"https://arquivos.qconcursos.com/prova/arquivo_gabarito/101234/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao-gabarito.pdf",
       groups:[
         { group:"PCP — Planejamento e Controle da Produção", video:{title:"PCP — Conceito, pilares, etapas e benefícios (aula completa)", id:"4zzzXJ5LtIA"},
           items:["Programação e sequenciamento da produção","Controle de processos e capacidade","Indicadores de desempenho (OEE, taxa de refugo)","MRP I e MRP II","Previsão de demanda e just-in-time (JIT)"] },
@@ -471,6 +558,7 @@
       ]},
     mecanica: { name:"Engenharia Mecânica",
       examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-24-engenharia-mecanica",
+      gabaritoUrl:"https://www.cesgranrio.org.br/concurso/transpetro/",
       groups:[
         { group:"Resistência dos Materiais", video:{title:"Resistência dos Materiais — buscar aulas", url:"https://www.youtube.com/results?search_query=resist%C3%AAncia+dos+materiais+aula+completa+engenharia"},
           items:["Tensão e deformação","Flexão e torção","Critérios de falha (Von Mises, Tresca)","Fadiga e concentração de tensões","Diagramas de esforços"] },
@@ -582,32 +670,165 @@
           items:["Modelo OSI e TCP/IP","Protocolos de rede"] },
         { group:"Engenharia de Software", video:{title:"Metodologias ágeis (Scrum) — buscar aulas", url:"https://www.youtube.com/results?search_query=engenharia+de+software+scrum+aula+completa"},
           items:["Ciclo de vida de software","Metodologias ágeis (Scrum)"] },
-        { group:"Segurança da Informação", video:{title:"Segurança da informação e LGPD — buscar aulas", url:"https://www.youtube.com/results?search_query=seguran%C3%A7a+da+informa%C3%A7%C3%A3o+LGPD+aula+completa"},
-          items:["Criptografia básica","Controles de acesso","LGPD"] }
+         { group:"Segurança da Informação", video:{title:"Segurança da informação e LGPD — buscar aulas", url:"https://www.youtube.com/results?search_query=seguran%C3%A7a+da+informa%C3%A7%C3%A3o+LGPD+aula+completa"},
+           items:["Criptografia básica","Controles de acesso","LGPD"] }
+       ]},
+    naval: { name:"Engenharia Naval",
+      examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-25-engenharia-naval",
+      groups:[
+        { group:"Arquitetura Naval", video:{title:"Arquitetura naval — buscar aulas", url:"https://www.youtube.com/results?search_query=arquitetura+naval+estabilidade+aula+completa"},
+          items:["Estabilidade de embarcações","Hidrostática e curvas de forma","Compartimentação e flutuabilidade"] },
+        { group:"Estruturas Navais", video:{title:"Estruturas navais — buscar aulas", url:"https://www.youtube.com/results?search_query=estruturas+navais+resist%C3%AAncia+estrutural+aula+completa"},
+          items:["Resistência estrutural do casco","Materiais navais","Soldagem e juntas"] },
+        { group:"Máquinas e Propulsão", video:{title:"Propulsão naval — buscar aulas", url:"https://www.youtube.com/results?search_query=propuls%C3%A3o+naval+m%C3%A1quinas+mar%C3%ADtimas+aula+completa"},
+          items:["Sistemas de propulsão","Máquinas auxiliares","Óleo combustível e lubrificantes"] },
+        { group:"Operação de Terminais e Dutos", video:{title:"Terminais e dutos — buscar aulas", url:"https://www.youtube.com/results?search_query=terminais+portu%C3%A1rios+dutos+opera%C3%A7%C3%A3o+aula+completa"},
+          items:["Operação de terminais aquaviários","Carregamento e descarregamento","Segurança na navegação de apoio"] }
+      ]},
+    inspecao: { name:"Engenharia de Inspeção",
+      examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-18-engenharia-de-inspecao",
+      groups:[
+        { group:"Ensaios Não Destrutivos", video:{title:"END — ensaios não destrutivos — buscar aulas", url:"https://www.youtube.com/results?search_query=ensaios+n%C3%A3o+destrutivos+ultrassom+l%C3%ADquido+penetrante+aula+completa"},
+          items:["Ultrassom","Líquido penetrante","Partículas magnéticas","Radiografia industrial"] },
+        { group:"Integridade de Equipamentos", video:{title:"Integridade de dutos e vasos — buscar aulas", url:"https://www.youtube.com/results?search_query=integridade+de+dutos+vasos+press%C3%A3o+aula+completa"},
+          items:["Inspeção de dutos","Vasos de pressão (NR-13)","Corrosão e proteção catódica"] },
+        { group:"Normas e Códigos", video:{title:"ASME API inspeção — buscar aulas", url:"https://www.youtube.com/results?search_query=ASME+API+570+510+inspe%C3%A7%C3%A3o+aula+completa"},
+          items:["API 510, 570 e 653","ASME seção VIII","Procedimentos de inspeção"] }
+      ]},
+    telecom: { name:"Engenharia de Telecomunicações",
+      examUrl:null,
+      groups:[
+        { group:"Fundamentos de Telecom", video:{title:"Telecomunicações — buscar aulas", url:"https://www.youtube.com/results?search_query=telecomunica%C3%A7%C3%B5es+modula%C3%A7%C3%A3o+aula+completa"},
+          items:["Modulação analógica e digital","Meios de transmissão","Antenas e propagação"] },
+        { group:"Redes e Protocolos", video:{title:"Redes de telecom — buscar aulas", url:"https://www.youtube.com/results?search_query=redes+telecomunica%C3%A7%C3%B5es+TCP+IP+aula+completa"},
+          items:["Modelo OSI e TCP/IP","Comutação de circuitos e pacotes","Redes ópticas"] },
+        { group:"Sistemas Industriais de Comunicação", video:{title:"Comunicação industrial — buscar aulas", url:"https://www.youtube.com/results?search_query=redes+industriais+comunica%C3%A7%C3%A3o+aula+completa"},
+          items:["Rádio industrial","Enlaces em plantas e dutos","Segurança da informação em redes"] }
+      ]},
+    geotecnica: { name:"Engenharia Geotécnica",
+      examUrl:null,
+      groups:[
+        { group:"Mecânica dos Solos", video:{title:"Mecânica dos solos — buscar aulas", url:"https://www.youtube.com/results?search_query=mec%C3%A2nica+dos+solos+aula+completa"},
+          items:["Índices físicos","Tensões no solo","Adensamento e cisalhamento"] },
+        { group:"Fundações e Contenções", video:{title:"Fundações e contenções — buscar aulas", url:"https://www.youtube.com/results?search_query=funda%C3%A7%C3%B5es+conten%C3%A7%C3%B5es+aula+completa"},
+          items:["Fundações rasas e profundas","Muros e taludes","Estabilidade de encostas"] },
+        { group:"Obras Lineares (dutos)", video:{title:"Geotecnia de dutos — buscar aulas", url:"https://www.youtube.com/results?search_query=geotecnia+dutos+faixa+de+servid%C3%A3o+aula+completa"},
+          items:["Faixa de dutos","Sondagens e investigação","Riscos geotécnicos"] }
+      ]},
+    advocacia: { name:"Advocacia",
+      examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-2-advocacia",
+      groups:[
+        { group:"Direito Constitucional e Administrativo", video:{title:"Direito administrativo para concursos — buscar aulas", url:"https://www.youtube.com/results?search_query=direito+administrativo+licita%C3%A7%C3%B5es+aula+completa+concurso"},
+          items:["Princípios da administração pública","Atos administrativos","Licitações e contratos (Lei 13.303/2016)"] },
+        { group:"Direito Civil e Empresarial", video:{title:"Direito civil e empresarial — buscar aulas", url:"https://www.youtube.com/results?search_query=direito+civil+empresarial+aula+completa+concurso"},
+          items:["Obrigações e contratos","Responsabilidade civil","Sociedades empresárias"] },
+        { group:"Direito do Trabalho e Ambiental", video:{title:"Direito do trabalho — buscar aulas", url:"https://www.youtube.com/results?search_query=direito+do+trabalho+aula+completa+concurso"},
+          items:["CLT aplicada a estatais","Meio ambiente do trabalho","Responsabilidade ambiental"] }
+      ]},
+    contabilidade: { name:"Contabilidade",
+      examUrl:null,
+      groups:[
+        { group:"Contabilidade Geral", video:{title:"Contabilidade geral — buscar aulas", url:"https://www.youtube.com/results?search_query=contabilidade+geral+CPC+aula+completa+concurso"},
+          items:["Regime de competência","Demonstrações contábeis","CPC e NBC TG"] },
+        { group:"Contabilidade de Custos e Gerencial", video:{title:"Contabilidade de custos — buscar aulas", url:"https://www.youtube.com/results?search_query=contabilidade+de+custos+aula+completa"},
+          items:["Custeio por absorção e variável","Margem de contribuição","Orçamento empresarial"] },
+        { group:"Contabilidade Pública e Auditoria", video:{title:"Contabilidade pública — buscar aulas", url:"https://www.youtube.com/results?search_query=contabilidade+p%C3%BAblica+auditoria+aula+completa+concurso"},
+          items:["MCASP básico","Prestação de contas","Auditoria interna"] }
+      ]},
+    comunicacao: { name:"Comunicação Social",
+      examUrl:null,
+      groups:[
+        { group:"Teorias da Comunicação", video:{title:"Teorias da comunicação — buscar aulas", url:"https://www.youtube.com/results?search_query=teorias+da+comunica%C3%A7%C3%A3o+aula+completa"},
+          items:["Modelos de comunicação","Opinião pública","Comunicação organizacional"] },
+        { group:"Jornalismo e Assessoria", video:{title:"Assessoria de imprensa — buscar aulas", url:"https://www.youtube.com/results?search_query=assessoria+de+imprensa+comunica%C3%A7%C3%A3o+corporativa+aula+completa"},
+          items:["Redação jornalística","Assessoria de imprensa","Gestão de crise"] },
+        { group:"Comunicação Digital", video:{title:"Comunicação digital — buscar aulas", url:"https://www.youtube.com/results?search_query=comunica%C3%A7%C3%A3o+digital+redes+sociais+aula+completa"},
+          items:["Redes sociais corporativas","Identidade visual","Ética e legislação da comunicação"] }
+      ]},
+    pedagogia: { name:"Pedagogia",
+      examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-27-pedagogia",
+      groups:[
+        { group:"Didática e Currículo", video:{title:"Didática e currículo — buscar aulas", url:"https://www.youtube.com/results?search_query=did%C3%A1tica+curr%C3%ADculo+aula+completa+pedagogia"},
+          items:["Planejamento de ensino","Avaliação da aprendizagem","Teorias pedagógicas"] },
+        { group:"Educação Corporativa", video:{title:"Educação corporativa — buscar aulas", url:"https://www.youtube.com/results?search_query=educa%C3%A7%C3%A3o+corporativa+T%26D+aula+completa"},
+          items:["Treinamento e desenvolvimento","Andragogia","Educação a distância"] },
+        { group:"Legislação Educacional", video:{title:"LDB e legislação educacional — buscar aulas", url:"https://www.youtube.com/results?search_query=LDB+legisla%C3%A7%C3%A3o+educacional+aula+completa"},
+          items:["LDB","PCNs e BNCC (noções)","Inclusão educacional"] }
+      ]},
+    medicina_trabalho: { name:"Medicina do Trabalho",
+      examUrl:null,
+      groups:[
+        { group:"Saúde Ocupacional", video:{title:"Medicina do trabalho — buscar aulas", url:"https://www.youtube.com/results?search_query=medicina+do+trabalho+PCMSO+aula+completa"},
+          items:["PCMSO","ASO e exames ocupacionais","Doenças relacionadas ao trabalho"] },
+        { group:"Toxicologia e Higiene", video:{title:"Toxicologia ocupacional — buscar aulas", url:"https://www.youtube.com/results?search_query=toxicologia+ocupacional+aula+completa"},
+          items:["Agentes químicos","Limites de exposição","Vigilância em saúde"] },
+        { group:"NRs e Perícias", video:{title:"NRs medicina do trabalho — buscar aulas", url:"https://www.youtube.com/results?search_query=NR-7+NR-9+medicina+do+trabalho+aula+completa"},
+          items:["NR-7 e NR-9","Nexo causal","Perícia médica"] }
+      ]},
+    enfermagem_trabalho: { name:"Enfermagem do Trabalho",
+      examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-14-enfermagem-do-trabalho",
+      groups:[
+        { group:"Enfermagem Ocupacional", video:{title:"Enfermagem do trabalho — buscar aulas", url:"https://www.youtube.com/results?search_query=enfermagem+do+trabalho+aula+completa"},
+          items:["Atuação no SESMT","Primeiros socorros industriais","Imunização ocupacional"] },
+        { group:"Vigilância em Saúde do Trabalhador", video:{title:"Saúde do trabalhador — buscar aulas", url:"https://www.youtube.com/results?search_query=sa%C3%BAde+do+trabalhador+vigil%C3%A2ncia+aula+completa"},
+          items:["Notificação de acidentes","Programa de saúde","Educação em saúde"] },
+        { group:"Normas e Biossegurança", video:{title:"Biossegurança e NRs — buscar aulas", url:"https://www.youtube.com/results?search_query=biosseguran%C3%A7a+enfermagem+do+trabalho+aula+completa"},
+          items:["NR-32 (noções)","EPIs","Registros de enfermagem"] }
+      ]},
+    psicologia: { name:"Psicologia",
+      examUrl:null,
+      groups:[
+        { group:"Psicologia Organizacional", video:{title:"Psicologia organizacional — buscar aulas", url:"https://www.youtube.com/results?search_query=psicologia+organizacional+aula+completa"},
+          items:["Recrutamento e seleção","Clima e cultura","Liderança e motivação"] },
+        { group:"Saúde Mental no Trabalho", video:{title:"Saúde mental no trabalho — buscar aulas", url:"https://www.youtube.com/results?search_query=sa%C3%BAde+mental+no+trabalho+aula+completa"},
+          items:["Estresse ocupacional","Assédio moral","Qualidade de vida no trabalho"] },
+        { group:"Avaliação Psicológica", video:{title:"Avaliação psicológica — buscar aulas", url:"https://www.youtube.com/results?search_query=avalia%C3%A7%C3%A3o+psicol%C3%B3gica+concurso+aula+completa"},
+          items:["Testes psicológicos","Ética do psicólogo","Laudos e atestados"] }
+      ]},
+    nutricao: { name:"Nutrição",
+      examUrl:null,
+      groups:[
+        { group:"Nutrição Básica", video:{title:"Nutrição básica — buscar aulas", url:"https://www.youtube.com/results?search_query=nutri%C3%A7%C3%A3o+b%C3%A1sica+macronutrientes+aula+completa"},
+          items:["Macro e micronutrientes","Avaliação nutricional","Dietas especiais"] },
+        { group:"Alimentação Coletiva", video:{title:"Alimentação coletiva — buscar aulas", url:"https://www.youtube.com/results?search_query=alimenta%C3%A7%C3%A3o+coletiva+UAN+aula+completa"},
+          items:["UAN e refeitórios industriais","HACCP e BPF","Cardápios institucionais"] },
+        { group:"Vigilância Sanitária", video:{title:"Vigilância sanitária de alimentos — buscar aulas", url:"https://www.youtube.com/results?search_query=vigil%C3%A2ncia+sanit%C3%A1ria+alimentos+aula+completa"},
+          items:["Boas práticas","Doenças transmitidas por alimentos","Legislação sanitária"] }
+      ]},
+    odontologia: { name:"Odontologia",
+      examUrl:null,
+      groups:[
+        { group:"Odontologia do Trabalho", video:{title:"Odontologia do trabalho — buscar aulas", url:"https://www.youtube.com/results?search_query=odontologia+do+trabalho+aula+completa"},
+          items:["Saúde bucal ocupacional","Exames admissionais odontológicos","Prevenção em ambiente industrial"] },
+        { group:"Clínica e Urgências", video:{title:"Urgências odontológicas — buscar aulas", url:"https://www.youtube.com/results?search_query=urg%C3%AAncias+odontol%C3%B3gicas+aula+completa"},
+          items:["Traumatismos","Infecções odontogênicas","Biossegurança"] },
+        { group:"Saúde Coletiva", video:{title:"Odontologia em saúde coletiva — buscar aulas", url:"https://www.youtube.com/results?search_query=odontologia+sa%C3%BAde+coletiva+aula+completa"},
+          items:["Epidemiologia bucal","Programas preventivos","Ética profissional"] }
+      ]},
+    ciencia_dados: { name:"Ciência de Dados",
+      examUrl:null,
+      groups:[
+        { group:"Estatística e Probabilidade", video:{title:"Estatística para ciência de dados — buscar aulas", url:"https://www.youtube.com/results?search_query=estat%C3%ADstica+ci%C3%AAncia+de+dados+aula+completa"},
+          items:["Distribuições","Inferência","Regressão"] },
+        { group:"Aprendizado de Máquina", video:{title:"Machine learning — buscar aulas", url:"https://www.youtube.com/results?search_query=machine+learning+aula+completa+iniciante"},
+          items:["Supervised vs unsupervised","Métricas de modelo","Overfitting"] },
+        { group:"Dados e SQL", video:{title:"SQL e bancos de dados — buscar aulas", url:"https://www.youtube.com/results?search_query=SQL+banco+de+dados+aula+completa"},
+          items:["SQL","ETL","Visualização de dados"] }
       ]}
   };
 
-  // ênfases sem conteúdo customizado ainda (fallback genérico)
-  const GENERIC_ENFASES = {
-    naval:{ name:"Engenharia Naval", examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-25-engenharia-naval" },
-    inspecao:{ name:"Engenharia de Inspeção", examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-18-engenharia-de-inspecao" },
-    telecom:{ name:"Engenharia de Telecomunicações", examUrl:null },
-    geotecnica:{ name:"Engenharia Geotécnica", examUrl:null },
-    advocacia:{ name:"Advocacia", examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-2-advocacia" },
-    contabilidade:{ name:"Contabilidade", examUrl:null },
-    comunicacao:{ name:"Comunicação Social", examUrl:null },
-    pedagogia:{ name:"Pedagogia", examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-27-pedagogia" },
-    medicina_trabalho:{ name:"Medicina do Trabalho", examUrl:null },
-    enfermagem_trabalho:{ name:"Enfermagem do Trabalho", examUrl:"https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-14-enfermagem-do-trabalho" },
-    psicologia:{ name:"Psicologia", examUrl:null },
-    nutricao:{ name:"Nutrição", examUrl:null },
-    odontologia:{ name:"Odontologia", examUrl:null },
-    ciencia_dados:{ name:"Ciência de Dados", examUrl:null }
-  };
-
   function getCourseData(key) {
-    if (COURSES[key]) return { name: COURSES[key].name, examUrl: COURSES[key].examUrl, groups: COURSES[key].groups.concat(COMMON_GROUPS), custom:true };
-    if (GENERIC_ENFASES[key]) return { name: GENERIC_ENFASES[key].name, examUrl: GENERIC_ENFASES[key].examUrl, groups: COMMON_GROUPS.slice(), custom:false };
+    if (COURSES[key]) {
+      const c = COURSES[key];
+      return {
+        name: c.name,
+        examUrl: c.examUrl || null,
+        provaUrl: c.provaUrl || null,
+        gabaritoUrl: c.gabaritoUrl || 'https://www.cesgranrio.org.br/concurso/transpetro/',
+        groups: (c.groups || []).concat(COMMON_GROUPS),
+        custom: !!(c.groups && c.groups.length)
+      };
+    }
     return null;
   }
 
@@ -635,39 +856,86 @@
 
   const QUICK_CHIPS = ["producao","mecanica","civil","eletrica","quimica","automacao","ambiental","seguranca","administracao","analise_sistemas"];
 
-  let selectedCourse = "producao"; // padrão até carregar preferência salva
+  const EXTRA_EXAMS = [
+    {
+      id: "producao-2023",
+      name: "Engenharia de Produção 2023 — Prova 19",
+      total: 70,
+      provaUrl: "https://arquivos.qconcursos.com/prova/arquivo_prova/101234/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao-prova.pdf",
+      gabaritoUrl: "https://arquivos.qconcursos.com/prova/arquivo_gabarito/101234/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao-gabarito.pdf",
+      examUrl: "https://www.qconcursos.com/questoes-de-concursos/provas/cesgranrio-2023-transpetro-profissional-transpetro-de-nivel-superior-junior-enfase-19-engenharia-de-producao"
+    },
+    {
+      id: "dutos-2023",
+      name: "Técnico de Dutos e Terminais 2023",
+      total: 60,
+      provaUrl: "https://arquivos.qconcursos.com/prova/arquivo_prova/101197/cesgranrio-2023-transpetro-tecnico-de-dutos-prova.pdf",
+      gabaritoUrl: "https://arquivos.qconcursos.com/prova/arquivo_gabarito/101197/cesgranrio-2023-transpetro-tecnico-de-dutos-gabarito.pdf"
+    }
+  ];
+
+  let selectedCourse = null;
+  let pendingCourse = null;
   let progressByCourse = {};
+  let gabAnswers = {};
+  let gabOfficial = {};
   const COURSE_KEY = 'transpetro-2026-course';
   const TOPIC_KEY = 'transpetro-2026-progress-v2';
+  const LETTERS = ["A","B","C","D","E"];
+
+  function goToTab(id) {
+    const btn = document.querySelector(`.nav-btn[data-tab="${id}"]`);
+    if (btn) btn.click();
+  }
 
   function renderEnfaseList() {
     Object.keys(ENFASE_LISTS).forEach((catId) => {
       const panel = document.getElementById(catId);
       panel.innerHTML = '';
-      const ul = document.createElement('ul');
-      ul.className = 'enfase-list';
+      const grid = document.createElement('div');
+      grid.className = 'course-card-grid';
       ENFASE_LISTS[catId].forEach(([label, key]) => {
-        const li = document.createElement('li');
         const isSel = key === selectedCourse;
-        if (isSel) li.classList.add('selected');
-        li.innerHTML = `
-          <span class="enfase-name">${label}</span>
-          ${isSel ? '<span class="tag highlight">selecionada</span>' : ''}
-          <button class="select-btn ${isSel ? 'selected' : ''}" data-course="${key}">${isSel ? '✓ Selecionada' : 'Selecionar'}</button>
+        const isPend = key === pendingCourse && !isSel;
+        const data = getCourseData(key);
+        const card = document.createElement('div');
+        card.className = 'course-pick' + (isSel ? ' selected' : '');
+        card.innerHTML = `
+          <span class="pick-name">${label}</span>
+          <div class="pick-meta">${data && data.groups ? data.groups.length + ' blocos de estudo' : 'Trilha disponível'}${isSel ? ' · curso ativo' : ''}</div>
+          <button class="want-btn ${isSel ? 'selected' : ''}" data-course="${key}" type="button">${isSel ? 'Curso selecionado' : 'Essa daqui que eu quero'}</button>
         `;
-        ul.appendChild(li);
+        if (isPend) card.style.boxShadow = '0 0 0 2px var(--accent-glow)';
+        card.querySelector('.want-btn').addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          confirmCourse(key);
+        });
+        card.addEventListener('click', (ev) => {
+          if (ev.target.closest('.want-btn')) return;
+          pendingCourse = key;
+          confirmCourse(key);
+        });
+        grid.appendChild(card);
       });
-      panel.appendChild(ul);
+      panel.appendChild(grid);
     });
-    panel_bind_selects();
+    renderPickerHint();
   }
 
-  function panel_bind_selects() {
-    document.querySelectorAll('.select-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        selectCourse(btn.dataset.course);
-      });
-    });
+  function renderPickerHint() {
+    const hint = document.getElementById('course-picker-hint');
+    const data = selectedCourse ? getCourseData(selectedCourse) : null;
+    if (data) {
+      hint.style.background = 'var(--green-bg)';
+      hint.style.borderColor = '#7DCFC4';
+      hint.style.color = '#065F4D';
+      hint.innerHTML = `<strong>${data.name}</strong> está selecionada. A trilha, as aulas, as provas e os gabaritos já foram desenhados para essa graduação.`;
+    } else {
+      hint.style.background = 'var(--amber-bg)';
+      hint.style.borderColor = '#F0D5A8';
+      hint.style.color = '#7A4A05';
+      hint.textContent = 'Nenhum curso confirmado ainda. Clique no curso da sua graduação e em "Essa daqui que eu quero".';
+    }
   }
 
   function renderQuickChips() {
@@ -679,56 +947,93 @@
       const chip = document.createElement('button');
       chip.className = 'course-chip' + (key === selectedCourse ? ' active' : '');
       chip.textContent = data.name;
-      chip.addEventListener('click', () => selectCourse(key));
+      chip.addEventListener('click', () => confirmCourse(key, { stay: true }));
       row.appendChild(chip);
     });
   }
 
-  async function selectCourse(key) {
+  async function confirmCourse(key, opts) {
     selectedCourse = key;
-    try { await window.storage.set(COURSE_KEY, key, false); } catch (e) {}
+    pendingCourse = key;
+    await persistSet(COURSE_KEY, key);
+    refreshCourseUI();
+    if (!opts || !opts.stay) goToTab('trilha');
+  }
+
+  function refreshCourseUI() {
     renderQuickChips();
     renderEnfaseList();
     renderTrilha();
     renderPainelCourseCard();
     renderTestesCourseCard();
+    renderHeaderCourse();
+    fillGabExamSelect();
+  }
+
+  function renderHeaderCourse() {
+    const el = document.getElementById('header-course-name');
+    const data = selectedCourse ? getCourseData(selectedCourse) : null;
+    el.textContent = data ? data.name : 'Nenhum curso selecionado';
   }
 
   function renderPainelCourseCard() {
-    const data = getCourseData(selectedCourse);
-    document.getElementById('painel-course-title').textContent = `Sua ênfase selecionada: ${data.name}`;
-    document.getElementById('painel-course-text').textContent = data.custom
-      ? `Sua trilha de estudos e as aulas específicas para ${data.name} já estão prontas na aba "Sua trilha".`
-      : `Conteúdo específico de ${data.name} está sendo ampliado — enquanto isso, foque nos Conhecimentos Gerais e confira o Anexo I do edital para o detalhamento oficial.`;
+    const data = selectedCourse ? getCourseData(selectedCourse) : null;
+    const btn = document.getElementById('painel-go-course');
+    if (!data) {
+      document.getElementById('painel-course-title').textContent = 'Nenhum curso selecionado';
+      document.getElementById('painel-course-text').textContent = 'Escolha a graduação (ex.: Engenharia Mecânica). A plataforma desenha a trilha, as aulas e os gabaritos daquela ênfase.';
+      btn.textContent = 'Escolher meu curso';
+      return;
+    }
+    document.getElementById('painel-course-title').textContent = `Curso ativo: ${data.name}`;
+    document.getElementById('painel-course-text').textContent = `Sua trilha, as aulas e os gabaritos de ${data.name} já estão prontos. Clique em "Sua trilha" para estudar o conteúdo dessa graduação.`;
+    btn.textContent = 'Ver minha trilha';
+  }
+
+  function examButtons(data) {
+    const parts = [];
+    if (data.provaUrl) parts.push(`<a href="${data.provaUrl}" class="exam-link" target="_blank" rel="noopener">Prova</a>`);
+    else if (data.examUrl) parts.push(`<a href="${data.examUrl}" class="exam-link" target="_blank" rel="noopener">Prova</a>`);
+    parts.push(`<a href="${data.gabaritoUrl || 'https://www.cesgranrio.org.br/concurso/transpetro/'}" class="exam-link" target="_blank" rel="noopener">Gabarito</a>`);
+    if (data.examUrl) parts.push(`<a href="${data.examUrl}" class="exam-link" target="_blank" rel="noopener">Questoes</a>`);
+    return parts.join('');
   }
 
   function renderTestesCourseCard() {
-    const data = getCourseData(selectedCourse);
-    document.getElementById('testes-course-name').textContent = data.name;
-    document.getElementById('testes-course-meta').textContent = data.examUrl
-      ? 'Prova de 2023 da mesma ênfase (edital anterior), com questões e gabarito.'
-      : 'Ainda não localizamos um caderno específico dessa ênfase no repositório público — confira o site da Cesgranrio.';
+    const data = selectedCourse ? getCourseData(selectedCourse) : null;
     const cardWrap = document.getElementById('testes-course-card');
-    if (data.examUrl) {
-      cardWrap.innerHTML = `
-        <div class="exam-card">
-          <div class="exam-info"><h4>${data.name} — Cesgranrio 2023</h4><p>Questões comentadas e gabarito no Qconcursos</p></div>
-          <div class="exam-links"><a href="${data.examUrl}" class="exam-link" target="_blank" rel="noopener">✓ Ver prova e gabarito</a></div>
-        </div>`;
-    } else {
-      cardWrap.innerHTML = `
-        <div class="exam-card">
-          <div class="exam-info"><h4>${data.name}</h4><p>Ainda sem link específico verificado</p></div>
-          <div class="exam-links"><a href="https://www.cesgranrio.org.br/concurso/transpetro/" class="exam-link" target="_blank" rel="noopener">🔗 Ver no Cesgranrio</a></div>
-        </div>`;
+    if (!data) {
+      document.getElementById('testes-course-name').textContent = '—';
+      document.getElementById('testes-course-meta').textContent = 'Selecione um curso para ver prova e gabarito da sua ênfase.';
+      cardWrap.innerHTML = `<div class="exam-card"><div class="exam-info"><h4>Nenhum curso selecionado</h4><p>Vá em Escolher curso e confirme a graduação.</p></div></div>`;
+      return;
     }
+    document.getElementById('testes-course-name').textContent = data.name;
+    document.getElementById('testes-course-meta').textContent = data.provaUrl || data.gabaritoUrl || data.examUrl
+      ? 'Prova e gabarito do concurso anterior da Cesgranrio (mesma ênfase, quando disponível).'
+      : 'Ainda sem caderno específico verificado — use o site da Cesgranrio e o conferidor abaixo.';
+    cardWrap.innerHTML = `
+      <div class="exam-card featured">
+        <div class="exam-info"><h4>${data.name} — Cesgranrio 2023</h4><p>Caderno de prova, gabarito oficial e questões para treino</p></div>
+        <div class="exam-links">${examButtons(data)}</div>
+      </div>`;
   }
 
   const container = document.getElementById('topics-container');
   let allTopics = [];
 
   function renderTrilha() {
-    const data = getCourseData(selectedCourse);
+    const data = selectedCourse ? getCourseData(selectedCourse) : null;
+    if (!data) {
+      document.getElementById('trilha-course-name').textContent = 'Nenhum curso selecionado';
+      container.innerHTML = '<div class="picker-hint">Clique na aba <strong>Escolher curso</strong>, selecione a graduação (ex.: Engenharia Mecânica) e confirme em <strong>Essa daqui que eu quero</strong>. A trilha dessa ênfase aparece aqui.</div>';
+      allTopics = [];
+      document.getElementById('total-done').textContent = '0';
+      document.getElementById('total-count').textContent = '0';
+      document.getElementById('total-pct-trilha').textContent = '0%';
+      document.getElementById('progress-fill').style.width = '0%';
+      return;
+    }
     document.getElementById('trilha-course-name').textContent = data.name;
     container.innerHTML = '';
     allTopics = [];
@@ -745,9 +1050,9 @@
       const videoCard = document.createElement('a');
       videoCard.href = videoUrl; videoCard.target = '_blank'; videoCard.rel = 'noopener';
       videoCard.className = 'video-card' + (v.id ? '' : ' no-thumb');
-      videoCard.innerHTML = `
-        <div class="video-thumb-wrap">${v.id ? `<img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt="">` : ''}</div>
-        <div class="video-info"><div class="video-title">🎥 ${v.title}</div><div class="video-sub">Assistir aula completa</div></div>
+                  videoCard.innerHTML = `
+        <div class="video-thumb-wrap">${v.id ? `<img src="https://img.youtube.com/vi/${v.id}/mqdefault.jpg" alt=""><span class="play"></span>` : ''}</div>
+        <div class="video-info"><div class="video-title">${v.title}</div><div class="video-sub">Assistir aula completa</div></div>
       `;
       groupDiv.appendChild(videoCard);
 
@@ -794,11 +1099,12 @@
   }
 
   async function saveProgress() {
-    try { await window.storage.set(TOPIC_KEY, JSON.stringify(progressByCourse), false); } catch (e) {}
+    await persistSet(TOPIC_KEY, JSON.stringify(progressByCourse));
   }
 
   container.addEventListener('change', (e) => {
     if (e.target.matches('input[type="checkbox"]')) {
+      if (!selectedCourse) return;
       if (!progressByCourse[selectedCourse]) progressByCourse[selectedCourse] = {};
       progressByCourse[selectedCourse][`${e.target.dataset.gi}-${e.target.dataset.ii}`] = e.target.checked;
       applyProgress();
@@ -806,23 +1112,160 @@
     }
   });
 
+  function listExams() {
+    const list = [];
+    const data = selectedCourse ? getCourseData(selectedCourse) : null;
+    if (data) {
+      list.push({
+        id: 'curso-' + selectedCourse,
+        name: data.name + ' (seu curso)',
+        total: 70,
+        provaUrl: data.provaUrl,
+        gabaritoUrl: data.gabaritoUrl,
+        examUrl: data.examUrl
+      });
+    }
+    EXTRA_EXAMS.forEach((ex) => {
+      if (!list.some((x) => x.name.indexOf(ex.name.split(' —')[0]) !== -1 && x.id !== 'curso-' + selectedCourse)) {
+        list.push(ex);
+      }
+    });
+    return list;
+  }
+
+  function fillGabExamSelect() {
+    const sel = document.getElementById('gab-exam');
+    const current = sel.value;
+    sel.innerHTML = '';
+    listExams().forEach((ex) => {
+      const opt = document.createElement('option');
+      opt.value = ex.id;
+      opt.textContent = ex.name + ' (' + ex.total + ' questões)';
+      opt.dataset.total = String(ex.total);
+      sel.appendChild(opt);
+    });
+    if ([...sel.options].some((o) => o.value === current)) sel.value = current;
+    renderGabGrid();
+  }
+
+  function currentExam() {
+    const id = document.getElementById('gab-exam').value;
+    return listExams().find((e) => e.id === id) || listExams()[0];
+  }
+
+  function renderGabGrid() {
+    const exam = currentExam();
+    const wrap = document.getElementById('gab-grid');
+    wrap.innerHTML = '';
+    if (!exam) return;
+    if (!gabAnswers[exam.id]) gabAnswers[exam.id] = {};
+    for (let i = 1; i <= exam.total; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'gab-q';
+      cell.dataset.n = String(i);
+      const chosen = gabAnswers[exam.id][i] || '';
+      cell.innerHTML = `<span class="n">${i}</span><div class="gab-opts">${LETTERS.map((L) => `<button type="button" data-l="${L}" class="${chosen === L ? 'on' : ''}">${L}</button>`).join('')}</div>`;
+      wrap.appendChild(cell);
+    }
+  }
+
+  function parseOfficial(str) {
+    return (str || '').toUpperCase().replace(/[^A-E]/g, '').split('');
+  }
+
+  function conferirGabarito() {
+    const exam = currentExam();
+    if (!exam) return;
+    const official = parseOfficial(document.getElementById('gab-official-input').value);
+    const result = document.getElementById('gab-result');
+    const officialBox = document.getElementById('gab-official');
+    if (!official.length) {
+      result.className = 'result-box show';
+      result.innerHTML = 'Cole o gabarito oficial (letras A–E) no campo acima. Abra o PDF do gabarito se ainda não tiver as letras.';
+      return;
+    }
+    officialBox.textContent = official.map((L, i) => ((i % 10 === 0) ? (i + 1) + ':' : '') + L).join(' ');
+    let ok = 0, blank = 0, bad = 0;
+    document.querySelectorAll('#gab-grid .gab-q').forEach((cell) => {
+      const n = parseInt(cell.dataset.n, 10);
+      const mine = gabAnswers[exam.id][n] || '';
+      const right = official[n - 1] || '';
+      cell.classList.remove('ok', 'bad');
+      if (!mine) { blank++; return; }
+      if (right && mine === right) { cell.classList.add('ok'); ok++; }
+      else { cell.classList.add('bad'); bad++; }
+    });
+    const answered = ok + bad;
+    const pct = answered ? Math.round((ok / exam.total) * 100) : 0;
+    result.className = 'result-box show';
+    result.innerHTML = `<strong>${ok}</strong> acertos · <strong>${bad}</strong> erros · <strong>${blank}</strong> em branco · ${pct}% do total (${exam.total} questões).`;
+  }
+
+  document.getElementById('gab-grid').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-l]');
+    if (!btn) return;
+    const exam = currentExam();
+    if (!exam) return;
+    const cell = btn.closest('.gab-q');
+    const n = parseInt(cell.dataset.n, 10);
+    const letter = btn.dataset.l;
+    if (!gabAnswers[exam.id]) gabAnswers[exam.id] = {};
+    gabAnswers[exam.id][n] = gabAnswers[exam.id][n] === letter ? '' : letter;
+    cell.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.l === gabAnswers[exam.id][n]));
+    cell.classList.remove('ok', 'bad');
+  });
+  document.getElementById('gab-exam').addEventListener('change', () => {
+    document.getElementById('gab-result').classList.remove('show');
+    renderGabGrid();
+  });
+  document.getElementById('gab-check').addEventListener('click', conferirGabarito);
+  document.getElementById('gab-show').addEventListener('click', () => {
+    const exam = currentExam();
+    const wrap = document.getElementById('gab-official-wrap');
+    wrap.style.display = 'block';
+    if (exam && exam.gabaritoUrl) window.open(exam.gabaritoUrl, '_blank', 'noopener');
+    else if (exam && exam.examUrl) window.open(exam.examUrl, '_blank', 'noopener');
+    else window.open('https://www.cesgranrio.org.br/concurso/transpetro/', '_blank', 'noopener');
+  });
+  document.getElementById('gab-clear').addEventListener('click', () => {
+    const exam = currentExam();
+    if (exam) gabAnswers[exam.id] = {};
+    document.getElementById('gab-result').classList.remove('show');
+    document.getElementById('gab-official-input').value = '';
+    renderGabGrid();
+  });
+  document.getElementById('gab-official-input').addEventListener('input', () => {
+    const letters = parseOfficial(document.getElementById('gab-official-input').value);
+    document.getElementById('gab-official').textContent = letters.length
+      ? letters.map((L, i) => (i % 10 === 0 ? (i + 1) + ':' + L : L)).join(' ')
+      : 'Abra o PDF do gabarito, copie as letras e cole acima.';
+  });
+
+  async function persistGet(key) {
+    try {
+      if (window.storage && window.storage.get) {
+        const res = await window.storage.get(key, false);
+        if (res && res.value) return res.value;
+      }
+    } catch (e) {}
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+  async function persistSet(key, value) {
+    try { if (window.storage && window.storage.set) await window.storage.set(key, value, false); } catch (e) {}
+    try { localStorage.setItem(key, value); } catch (e) {}
+  }
+
   async function bootstrap() {
     try {
-      const savedCourse = await window.storage.get(COURSE_KEY, false);
-      if (savedCourse && savedCourse.value) selectedCourse = savedCourse.value;
+      const savedCourse = await persistGet(COURSE_KEY);
+      if (savedCourse) selectedCourse = savedCourse;
     } catch (e) {}
     try {
-      const savedProgress = await window.storage.get(TOPIC_KEY, false);
-      if (savedProgress && savedProgress.value) progressByCourse = JSON.parse(savedProgress.value);
+      const savedProgress = await persistGet(TOPIC_KEY);
+      if (savedProgress) progressByCourse = JSON.parse(savedProgress);
     } catch (e) {}
-
-    renderQuickChips();
-    renderEnfaseList();
-    renderTrilha();
-    renderPainelCourseCard();
-    renderTestesCourseCard();
+    refreshCourseUI();
   }
-  bootstrap();
 
   // ===== TESTES: registro e taxa de aprovação =====
   const ATTEMPTS_KEY = 'transpetro-2026-test-attempts';
@@ -830,13 +1273,13 @@
 
   async function loadAttempts() {
     try {
-      const res = await window.storage.get(ATTEMPTS_KEY, false);
-      if (res && res.value) attempts = JSON.parse(res.value);
+      const raw = await persistGet(ATTEMPTS_KEY);
+      if (raw) attempts = JSON.parse(raw);
     } catch (e) { attempts = []; }
     renderAttempts();
   }
   async function saveAttempts() {
-    try { await window.storage.set(ATTEMPTS_KEY, JSON.stringify(attempts), false); } catch (e) {}
+    await persistSet(ATTEMPTS_KEY, JSON.stringify(attempts));
   }
   function renderAttempts() {
     const listEl = document.getElementById('attempt-list');
@@ -874,7 +1317,10 @@
   document.getElementById('log-submit').addEventListener('click', () => {
     const examSelect = document.getElementById('log-exam');
     let exam = examSelect.value;
-    if (exam === "Prova da minha ênfase selecionada") exam = getCourseData(selectedCourse).name + " (prova antiga)";
+    if (exam === "Prova da minha ênfase selecionada") {
+      const d = selectedCourse ? getCourseData(selectedCourse) : null;
+      exam = d ? d.name + " (prova antiga)" : "Prova da ênfase selecionada";
+    }
     const correctInput = document.getElementById('log-correct');
     const totalInput = document.getElementById('log-total');
     let correct = parseInt(correctInput.value, 10);
@@ -921,6 +1367,11 @@
       document.getElementById(tab.dataset.cat).classList.add('active');
     });
   });
+
+  document.getElementById('header-change-course').addEventListener('click', () => goToTab('cursos'));
+  document.getElementById('painel-go-course').addEventListener('click', () => goToTab(selectedCourse ? 'trilha' : 'cursos'));
+
+  bootstrap();
 </script>
 
 </body>
