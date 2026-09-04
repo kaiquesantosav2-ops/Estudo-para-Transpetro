@@ -351,6 +351,22 @@ th { color: var(--text-2); font-size: 11.5px; text-transform: uppercase; }
 .kbd { font-size: 11px; color: var(--text-3); }
 .sidebar-foot .course-pill { width: 100%; }
 .bottom-nav svg { width: 18px; height: 18px; display: block; margin: 0 auto 2px; }
+.next-card { margin-top: 14px; }
+.habit-row {
+  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px;
+  font-size: 12.5px; color: var(--text-2); font-weight: 650;
+}
+.q-stats { color: var(--text-2); font-size: 13px; font-weight: 650; margin: 0 0 10px; }
+.course-pick.hidden, .topic-group.hidden { display: none; }
+.search { max-width: 100%; }
+#search-results { margin-bottom: 14px; }
+#search-results .course-card-grid { margin-top: 8px; }
+.week-dots { display: flex; gap: 6px; margin-top: 10px; }
+.week-dots i {
+  width: 10px; height: 10px; border-radius: 50%; background: var(--bg-muted); border: 1px solid var(--line);
+}
+.week-dots i.on { background: var(--ok); border-color: var(--ok); }
+#habit-mark.done { background: var(--ok); color: #fff; border-color: var(--ok); }
 
 @media (max-width: 1080px) {
   .g-4, .g-3, .g-2 { grid-template-columns: 1fr 1fr; }

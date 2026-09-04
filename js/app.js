@@ -5,6 +5,8 @@
   const ATTEMPTS_KEY = "transpetro-2026-test-attempts";
   const THEME_KEY = "transpetro-2026-theme";
   const QSTATE_KEY = "transpetro-2026-qstate";
+  const GAB_KEY = "transpetro-2026-gab-answers";
+  const HABIT_KEY = "transpetro-2026-habit";
   const CESGRANRIO = "https://www.cesgranrio.org.br/concurso/transpetro/";
 
   let selectedCourse = null;
@@ -13,11 +15,14 @@
   let gabAnswers = {};
   let attempts = [];
   let allTopics = [];
-  let qState = { fav: {}, rev: {}, lastWrong: {}, idx: 0, pick: null, confirmed: false };
+  let qState = { fav: {}, rev: {}, lastWrong: {}, answered: {}, idx: 0, pick: null, confirmed: false };
+  let habit = { days: [], streak: 0 };
   let moduleFilter = "all";
   let qOnlyReview = false;
   let qOnlyFav = false;
+  let qOnlyWrong = false;
   let toastTimer = null;
+  let gabSaveTimer = null;
 
   const container = document.getElementById("topics-container");
 
@@ -45,6 +50,84 @@
     el.classList.add("show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2200);
+  }
+
+  function todayISO() {
+    const d = new Date();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return d.getFullYear() + "-" + m + "-" + day;
+  }
+
+  function addDaysISO(iso, n) {
+    const p = iso.split("-");
+    const d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+    d.setDate(d.getDate() + n);
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return d.getFullYear() + "-" + m + "-" + day;
+  }
+
+  function computeStreak(days) {
+    const set = {};
+    (days || []).forEach(function (x) { set[x] = true; });
+    let streak = 0;
+    let cursor = todayISO();
+    if (!set[cursor]) cursor = addDaysISO(cursor, -1);
+    while (set[cursor]) {
+      streak += 1;
+      cursor = addDaysISO(cursor, -1);
+    }
+    return streak;
+  }
+
+  function last7Days() {
+    const out = [];
+    for (let i = 6; i >= 0; i--) out.push(addDaysISO(todayISO(), -i));
+    return out;
+  }
+
+  async function saveHabit() {
+    habit.streak = computeStreak(habit.days);
+    await persistSet(HABIT_KEY, JSON.stringify(habit));
+  }
+
+  function markTodayStudy(manual) {
+    const today = todayISO();
+    if ((habit.days || []).indexOf(today) === -1) {
+      habit.days = (habit.days || []).concat([today]);
+      saveHabit();
+      if (manual) toast("Estudo de hoje marcado");
+    } else if (manual) {
+      toast("Hoje já estava marcado");
+    }
+    renderNextStep();
+  }
+
+  function scheduleGabSave() {
+    clearTimeout(gabSaveTimer);
+    gabSaveTimer = setTimeout(function () {
+      persistSet(GAB_KEY, JSON.stringify(gabAnswers));
+    }, 250);
+  }
+
+  function practiceStats() {
+    const answered = qState.answered || {};
+    let total = 0;
+    let ok = 0;
+    Object.keys(answered).forEach(function (id) {
+      total += 1;
+      if (answered[id] === "ok") ok += 1;
+    });
+    return { total: total, ok: ok, pct: total ? Math.round((ok / total) * 100) : null };
+  }
+
+  function todayProgressCounts() {
+    const courseProgress = progressByCourse[selectedCourse] || {};
+    let topics = 0;
+    Object.keys(courseProgress).forEach(function (k) { if (courseProgress[k]) topics += 1; });
+    const qs = practiceStats().total;
+    return { topics: topics, questions: qs };
   }
 
   function currentTheme() {
@@ -89,6 +172,7 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
     if (id === "modulos") renderModules();
     if (id === "questoes") renderQuestion();
+    renderNextStep();
   }
 
   function renderEnfaseList() {
@@ -99,27 +183,7 @@
       const grid = document.createElement("div");
       grid.className = "course-card-grid";
       window.ENFASE_LISTS[catId].forEach(function (pair) {
-        const label = pair[0];
-        const key = pair[1];
-        const isSel = key === selectedCourse;
-        const data = window.getCourseData(key);
-        const card = document.createElement("div");
-        card.className = "course-pick" + (isSel ? " selected" : "");
-        card.innerHTML =
-          '<span class="pick-name">' + label + "</span>" +
-          '<div class="pick-meta">' + (data && data.groups ? data.groups.length + " blocos de estudo" : "Trilha disponível") + (isSel ? " · curso ativo" : "") + "</div>" +
-          '<button class="want-btn ' + (isSel ? "selected" : "") + '" data-course="' + key + '" type="button">' +
-          (isSel ? "Curso selecionado" : "Essa daqui que eu quero") + "</button>";
-        card.querySelector(".want-btn").addEventListener("click", function (ev) {
-          ev.stopPropagation();
-          confirmCourse(key);
-        });
-        card.addEventListener("click", function (ev) {
-          if (ev.target.closest(".want-btn")) return;
-          pendingCourse = key;
-          confirmCourse(key);
-        });
-        grid.appendChild(card);
+        grid.appendChild(makeCourseCard(pair[0], pair[1]));
       });
       panel.appendChild(grid);
     });
@@ -178,6 +242,9 @@
     renderModules();
     fillQuestionFilter();
     renderQuestion();
+    renderNextStep();
+    filterCourses();
+    filterTrilha();
   }
 
   function renderHeaderCourse() {
@@ -339,10 +406,157 @@
     } else if (list) {
       list.innerHTML = "";
     }
+    renderNextStep();
   }
 
   async function saveProgress() {
     await persistSet(TOPIC_KEY, JSON.stringify(progressByCourse));
+    renderNextStep();
+  }
+
+  function firstIncompleteGroup(data) {
+    if (!data) return null;
+    for (let gi = 0; gi < data.groups.length; gi++) {
+      const st = groupStats(gi, data.groups[gi]);
+      if (st.status !== "done") return { gi: gi, group: data.groups[gi], st: st };
+    }
+    return null;
+  }
+
+  function renderNextStep() {
+    const title = $("next-title");
+    const text = $("next-text");
+    const go = $("next-go");
+    if (!title) return;
+    const data = selectedCourse ? window.getCourseData(selectedCourse) : null;
+    const stats = practiceStats();
+    const today = todayISO();
+    const studiedToday = (habit.days || []).indexOf(today) !== -1;
+    if (!data) {
+      title.textContent = "Comece pelo curso";
+      text.textContent = "Confirme a graduação para montar trilha, aulas e gabaritos.";
+      if (go) { go.textContent = "Escolher curso"; go.dataset.tab = "cursos"; }
+    } else {
+      const miss = firstIncompleteGroup(data);
+      if (miss) {
+        title.textContent = "Continue: " + miss.group.group;
+        text.textContent = miss.st.done + "/" + miss.st.total + " tópicos · " + miss.st.pct + "% neste bloco. Marque o que já revisou e treine 5 questões.";
+        if (go) { go.textContent = "Abrir trilha"; go.dataset.tab = "trilha"; }
+      } else {
+        title.textContent = "Trilha concluída — treine a prova";
+        text.textContent = "Refaça a prova da sua ênfase, cole o gabarito oficial e registre o resultado.";
+        if (go) { go.textContent = "Abrir testes"; go.dataset.tab = "testes"; }
+      }
+    }
+    const streakEl = $("habit-streak");
+    const goalEl = $("habit-goal");
+    habit.streak = computeStreak(habit.days);
+    if (streakEl) streakEl.textContent = "Sequência: " + habit.streak + (habit.streak === 1 ? " dia" : " dias");
+    if (goalEl) {
+      const counts = todayProgressCounts();
+      goalEl.textContent = studiedToday
+        ? "Estudo de hoje marcado · " + counts.topics + " tópicos na trilha · " + stats.total + " questão(ões) de treino"
+        : "Marque o dia. Trilha: " + counts.topics + " tópicos · treino: " + stats.total + "/5";
+    }
+    const mark = $("habit-mark");
+    if (mark) {
+      mark.classList.toggle("done", studiedToday);
+      mark.textContent = studiedToday ? "Hoje já estudado" : "Marcar estudo de hoje";
+    }
+    const week = $("habit-week");
+    if (week) {
+      const set = {};
+      (habit.days || []).forEach(function (x) { set[x] = true; });
+      week.innerHTML = last7Days().map(function (d) {
+        return "<i class=\"" + (set[d] ? "on" : "") + "\" title=\"" + d + "\"></i>";
+      }).join("");
+    }
+  }
+
+  function allCoursePairs() {
+    const seen = {};
+    const out = [];
+    Object.keys(window.ENFASE_LISTS).forEach(function (catId) {
+      window.ENFASE_LISTS[catId].forEach(function (pair) {
+        if (!seen[pair[1]]) { seen[pair[1]] = true; out.push(pair); }
+      });
+    });
+    return out;
+  }
+
+  function bindCourseCard(card, key) {
+    card.querySelector(".want-btn").addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      confirmCourse(key);
+    });
+    card.addEventListener("click", function (ev) {
+      if (ev.target.closest(".want-btn")) return;
+      pendingCourse = key;
+      confirmCourse(key);
+    });
+  }
+
+  function makeCourseCard(label, key) {
+    const isSel = key === selectedCourse;
+    const data = window.getCourseData(key);
+    const card = document.createElement("div");
+    card.className = "course-pick" + (isSel ? " selected" : "");
+    card.dataset.course = key;
+    card.innerHTML =
+      '<span class="pick-name">' + label + "</span>" +
+      '<div class="pick-meta">' + (data && data.groups ? data.groups.length + " blocos de estudo" : "Trilha disponível") + (isSel ? " · curso ativo" : "") + "</div>" +
+      '<button class="want-btn ' + (isSel ? "selected" : "") + '" data-course="' + key + '" type="button">' +
+      (isSel ? "Curso selecionado" : "Essa daqui que eu quero") + "</button>";
+    bindCourseCard(card, key);
+    return card;
+  }
+
+  function filterCourses() {
+    const input = $("course-search");
+    const results = $("search-results");
+    if (!input || !results) return;
+    const q = (input.value || "").trim().toLowerCase();
+    if (!q) {
+      results.hidden = true;
+      results.innerHTML = "";
+      document.querySelectorAll(".cat-panel .course-pick").forEach(function (el) { el.classList.remove("hidden"); });
+      return;
+    }
+    const matches = allCoursePairs().filter(function (pair) {
+      const data = window.getCourseData(pair[1]);
+      const blob = (pair[0] + " " + pair[1] + " " + (data ? data.name : "")).toLowerCase();
+      return blob.indexOf(q) !== -1;
+    });
+    results.hidden = false;
+    results.innerHTML = "";
+    const grid = document.createElement("div");
+    grid.className = "course-card-grid";
+    if (!matches.length) {
+      results.textContent = "";
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = 'Nenhuma ênfase encontrada para "' + input.value + '".';
+      results.appendChild(empty);
+      return;
+    }
+    matches.forEach(function (pair) { grid.appendChild(makeCourseCard(pair[0], pair[1])); });
+    results.appendChild(grid);
+    document.querySelectorAll(".cat-panel .course-pick").forEach(function (el) {
+      const key = el.dataset.course;
+      const hit = matches.some(function (p) { return p[1] === key; });
+      el.classList.toggle("hidden", !hit);
+    });
+  }
+
+  function filterTrilha() {
+    const input = $("trilha-search");
+    if (!input) return;
+    const q = (input.value || "").trim().toLowerCase();
+    document.querySelectorAll("#topics-container .topic-group").forEach(function (group) {
+      if (!q) { group.classList.remove("hidden"); return; }
+      const text = group.textContent.toLowerCase();
+      group.classList.toggle("hidden", text.indexOf(q) === -1);
+    });
   }
 
   function groupStats(gi, group) {
@@ -355,7 +569,9 @@
     let statusLabel = "Não iniciado";
     if (pct === 100) { status = "done"; statusLabel = "Concluído"; }
     else if (pct > 0) { status = "run"; statusLabel = "Em andamento"; }
-    if (qState.lastWrong && qState.lastWrong[gi] && status !== "idle") {
+     const related = questionsForGroup(gi, group);
+    const needsReview = related.some(function (q) { return qState.lastWrong && qState.lastWrong[q.id]; });
+    if (needsReview && status !== "idle") {
       status = "rev";
       statusLabel = "Revisão necessária";
     }
@@ -503,6 +719,7 @@
     if (cat && cat !== "all") list = list.filter(function (q) { return q.cat === cat; });
     if (qOnlyReview) list = list.filter(function (q) { return qState.rev[q.id]; });
     if (qOnlyFav) list = list.filter(function (q) { return qState.fav[q.id]; });
+    if (qOnlyWrong) list = list.filter(function (q) { return qState.lastWrong[q.id]; });
     return list;
   }
 
@@ -534,6 +751,7 @@
       opts.innerHTML = "";
       feedback.hidden = true;
       explain.classList.remove("show");
+      updateQStats();
       return;
     }
     if (qState.idx >= list.length) qState.idx = 0;
@@ -567,10 +785,25 @@
     $("q-fav").setAttribute("aria-pressed", qState.fav[q.id] ? "true" : "false");
     $("q-rev").classList.toggle("on", !!qState.rev[q.id]);
     $("q-rev").setAttribute("aria-pressed", qState.rev[q.id] ? "true" : "false");
+    updateQStats();
+  }
+
+  function updateQStats() {
+    const el = $("q-stats");
+    if (!el) return;
+    const s = practiceStats();
+    el.textContent = s.total
+      ? s.total + " respondidas no treino · " + s.pct + "% de acerto"
+      : "0 respondidas no treino · — de acerto";
   }
 
   async function saveQState() {
-    await persistSet(QSTATE_KEY, JSON.stringify({ fav: qState.fav, rev: qState.rev, lastWrong: qState.lastWrong }));
+    await persistSet(QSTATE_KEY, JSON.stringify({
+      fav: qState.fav,
+      rev: qState.rev,
+      lastWrong: qState.lastWrong,
+      answered: qState.answered
+    }));
   }
 
   function currentQ() {
@@ -663,6 +896,11 @@
     $("header-change-course").addEventListener("click", function () { goToTab("cursos"); });
     $("painel-go-course").addEventListener("click", function () { goToTab(selectedCourse ? "trilha" : "cursos"); });
     $("painel-go-tests").addEventListener("click", function () { goToTab("testes"); });
+    $("painel-go-questions").addEventListener("click", function () { goToTab("questoes"); });
+    $("next-go").addEventListener("click", function () { goToTab($("next-go").dataset.tab || "cursos"); });
+    $("habit-mark").addEventListener("click", function () { markTodayStudy(true); });
+    $("course-search").addEventListener("input", filterCourses);
+    $("trilha-search").addEventListener("input", filterTrilha);
     $("theme-toggle").addEventListener("click", toggleTheme);
     $("menu-btn").addEventListener("click", function () {
       $("sidebar").classList.add("open");
@@ -677,6 +915,7 @@
         progressByCourse[selectedCourse][e.target.dataset.gi + "-" + e.target.dataset.ii] = e.target.checked;
         applyProgress();
         saveProgress();
+        if (e.target.checked) markTodayStudy(false);
       }
     });
 
@@ -694,6 +933,7 @@
         b.classList.toggle("on", b.dataset.l === gabAnswers[exam.id][n]);
       });
       cell.classList.remove("ok", "bad");
+      scheduleGabSave();
     });
     $("gab-exam").addEventListener("change", function () {
       $("gab-result").classList.remove("show");
@@ -713,6 +953,7 @@
       $("gab-result").classList.remove("show");
       $("gab-official-input").value = "";
       renderGabGrid();
+      scheduleGabSave();
     });
     $("gab-official-input").addEventListener("input", function () {
       const letters = parseOfficial($("gab-official-input").value);
@@ -772,8 +1013,10 @@
       qState.confirmed = true;
       if (qState.pick !== q.answer) qState.lastWrong[q.id] = true;
       else delete qState.lastWrong[q.id];
+      qState.answered[q.id] = qState.pick === q.answer ? "ok" : "bad";
       saveQState();
       renderQuestion();
+      markTodayStudy(false);
     });
     $("q-next").addEventListener("click", function () {
       qState.idx += 1;
@@ -823,6 +1066,14 @@
       qState.confirmed = false;
       renderQuestion();
     });
+    $("q-only-wrong").addEventListener("click", function () {
+      qOnlyWrong = !qOnlyWrong;
+      $("q-only-wrong").classList.toggle("on", qOnlyWrong);
+      qState.idx = 0;
+      qState.pick = null;
+      qState.confirmed = false;
+      renderQuestion();
+    });
 
     document.addEventListener("keydown", function (e) {
       const qView = $("questoes");
@@ -865,6 +1116,19 @@
         qState.fav = parsed.fav || {};
         qState.rev = parsed.rev || {};
         qState.lastWrong = parsed.lastWrong || {};
+        qState.answered = parsed.answered || {};
+      }
+    } catch (e) {}
+    try {
+      const gab = await persistGet(GAB_KEY);
+      if (gab) gabAnswers = JSON.parse(gab);
+    } catch (e) {}
+    try {
+      const hab = await persistGet(HABIT_KEY);
+      if (hab) {
+        const parsed = JSON.parse(hab);
+        habit.days = parsed.days || [];
+        habit.streak = computeStreak(habit.days);
       }
     } catch (e) {}
     const examDate = new Date("2026-11-29T00:00:00");
@@ -873,6 +1137,7 @@
     bindEvents();
     refreshCourseUI();
     renderAttempts();
+    renderNextStep();
   }
 
   bootstrap();

@@ -94,6 +94,7 @@ try {
             <div class="hero-actions">
               <button class="btn" id="painel-go-course" type="button">Escolher meu curso</button>
               <button class="btn ghost" id="painel-go-tests" type="button">Abrir testes</button>
+              <button class="btn ghost" id="painel-go-questions" type="button">Treinar questões</button>
             </div>
           </div>
           <div class="card">
@@ -134,6 +135,21 @@ try {
             <span>Melhor resultado</span>
             <div class="trend" id="stat-approval-rate-dash">Taxa de aprovação —</div>
           </div>
+        </div>
+
+        <div class="card next-card" id="today-card">
+          <div class="kicker">Próximo passo</div>
+          <h3 id="next-title">Comece pelo curso</h3>
+          <p class="lead" id="next-text">Confirme a graduação para montar trilha, aulas e gabaritos.</p>
+          <div class="hero-actions">
+            <button class="btn" id="next-go" type="button">Ir agora</button>
+            <button class="btn ghost" id="habit-mark" type="button">Marcar estudo de hoje</button>
+          </div>
+          <div class="habit-row">
+            <span id="habit-streak">Sequência: 0 dias</span>
+            <span id="habit-goal">Meta de hoje: 3 tópicos ou 5 questões</span>
+          </div>
+          <div class="week-dots" id="habit-week" aria-label="Estudo nos últimos 7 dias"></div>
         </div>
 
         <div class="grid g-2" style="margin-top:14px">
@@ -182,6 +198,7 @@ try {
       <section id="trilha" class="view">
         <h2 class="h1">Sua trilha de estudos</h2>
         <p class="lead">Conteúdo desenhado para o curso que você confirmou. Marque os tópicos conforme avança; o progresso é salvo por graduação.</p>
+        <input class="search" id="trilha-search" type="search" placeholder="Filtrar tópico ou bloco da trilha" aria-label="Filtrar trilha">
         <div class="chips" id="quick-course-chips"></div>
         <div class="course-banner">
           <div><div class="kicker">Curso ativo</div><div class="h1" id="trilha-course-name" style="font-size:20px">—</div></div>
@@ -197,6 +214,8 @@ try {
         <h2 class="h1">Escolha o curso da sua graduação</h2>
         <p class="lead">Clique no curso e depois em <strong>Essa daqui que eu quero</strong>. A trilha, as aulas, as provas e os gabaritos passam a ser só dessa graduação.</p>
         <div class="hint" id="course-picker-hint">Nenhum curso confirmado ainda. Escolha a ênfase da sua graduação abaixo.</div>
+        <input class="search" id="course-search" type="search" placeholder="Buscar ênfase (ex.: Mecânica, Enfermagem)" aria-label="Buscar curso">
+        <div id="search-results" hidden></div>
         <div class="chips">
           <button class="cat-tab active" data-cat="engenharias" type="button">Engenharias</button>
           <button class="cat-tab" data-cat="administrativas" type="button">Admin &amp; Gestão</button>
@@ -226,10 +245,12 @@ try {
       <section id="questoes" class="view">
         <h2 class="h1">Questões de treino</h2>
         <p class="lead">Banco de prática por disciplina. Não é gabarito oficial da Cesgranrio — use para treinar raciocínio e marcar revisão.</p>
+        <p class="q-stats" id="q-stats">0 respondidas no treino · — de acerto</p>
         <div class="row" style="margin-bottom:12px">
           <select id="q-filter" aria-label="Filtrar categoria"></select>
           <button class="chip" id="q-only-review" type="button">Só revisão</button>
           <button class="chip" id="q-only-fav" type="button">Só favoritas</button>
+          <button class="chip" id="q-only-wrong" type="button">Só erros</button>
         </div>
         <div class="card q-card" id="q-player">
           <div class="q-meta">
